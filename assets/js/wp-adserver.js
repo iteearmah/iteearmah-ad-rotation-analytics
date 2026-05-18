@@ -2,16 +2,16 @@
     'use strict';
 
     var serveAds = function() {
-        var placeholders = document.querySelectorAll('.wp-adserver-placeholder:not(.wp-ad-loaded)');
+        var placeholders = document.querySelectorAll('.itea-adserver-placeholder:not(.itea-ad-loaded)');
         if (placeholders.length === 0) return;
 
         placeholders.forEach(function(container) {
-            container.classList.add('wp-ad-loaded');
+            container.classList.add('itea-ad-loaded');
             var zone = container.getAttribute('data-zone');
-            var ajaxUrl = wpIteearmah Ad Rotation and Analytics.ajaxurl;
+            var ajaxUrl = iteaAdServerData.ajaxurl;
 
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', ajaxUrl + '?action=wp_adserver_get_ad&zone=' + encodeURIComponent(zone), true);
+            xhr.open('GET', ajaxUrl + '?action=itea_adserver_get_ad&zone=' + encodeURIComponent(zone), true);
             xhr.onload = function() {
                 if (xhr.status >= 200 && xhr.status < 400) {
                     var response = JSON.parse(xhr.responseText);

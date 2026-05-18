@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class WP_AdServer_Post_Types {
+class ITEA_AdServer_Post_Types {
 
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'register_post_type' ) );
@@ -36,7 +36,7 @@ class WP_AdServer_Post_Types {
 			'show_ui'            => true,
 			'show_in_menu'       => true,
 			'query_var'          => true,
-			'rewrite'            => array( 'slug' => 'wp-ad' ),
+			'rewrite'            => array( 'slug' => 'itea-ad' ),
 			'capability_type'    => 'ad',
 			'map_meta_cap'       => true,
 			'capabilities'       => array(
@@ -61,11 +61,11 @@ class WP_AdServer_Post_Types {
 			'supports'           => array( 'title' ),
 		);
 
-		register_post_type( 'wp_ad', $args );
+		register_post_type( 'itea_ad', $args );
 	}
 
 	public static function register_taxonomies() {
-		register_taxonomy( 'ad_zone', 'wp_ad', array(
+		register_taxonomy( 'itea_ad_zone', 'itea_ad', array(
 			'label'             => 'Ad Zones',
 			'hierarchical'      => true,
 			'public'            => false,

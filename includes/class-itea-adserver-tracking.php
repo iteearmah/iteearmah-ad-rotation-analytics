@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class WP_AdServer_Tracking {
+class ITEA_AdServer_Tracking {
 
 	public static function init() {
 		add_action( 'template_redirect', array( __CLASS__, 'handle_click_tracking' ) );
@@ -13,7 +13,7 @@ class WP_AdServer_Tracking {
 
 	public static function create_tables() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'wp_adserver_tracking';
+		$table_name = $wpdb->prefix . 'ITEA_AdServer_Tracking';
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE $table_name (
@@ -34,11 +34,11 @@ class WP_AdServer_Tracking {
 	}
 
 	public static function handle_click_tracking() {
-		if ( isset( $_GET['wp_ad_click'] ) ) {
-			$ad_id = intval( $_GET['wp_ad_click'] );
+		if ( isset( $_GET['itea_ad_click'] ) ) {
+			$ad_id = intval( $_GET['itea_ad_click'] );
 			self::track_event( $ad_id, 'click' );
 
-			$dest_url = function_exists( 'get_field' ) ? get_field( 'wp_ad_destination_url', $ad_id ) : get_post_meta( $ad_id, 'wp_ad_destination_url', true );
+			$dest_url = function_exists( 'get_field' ) ? get_field( 'itea_ad_destination_url', $ad_id ) : get_post_meta( $ad_id, 'itea_ad_destination_url', true );
 			if ( $dest_url && wp_http_validate_url( $dest_url ) ) {
 				wp_redirect( esc_url_raw( $dest_url ) );
 				exit;
@@ -50,7 +50,7 @@ class WP_AdServer_Tracking {
 
 	public static function track_event( $ad_id, $type ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'wp_adserver_tracking';
+		$table_name = $wpdb->prefix . 'ITEA_AdServer_Tracking';
 
 		$country = self::get_visitor_country();
 		$device  = self::get_visitor_device();
@@ -62,13 +62,13 @@ class WP_AdServer_Tracking {
 		) );
 
 		// Clear stat cache for this ad/type
-		delete_transient( 'wp_ad_stats_' . $ad_id . '_' . $type );
-		delete_transient( 'wp_ad_stats_aggregated' ); // Clear aggregated cache too
+		delete_transient( 'itea_ad_stats_' . $ad_id . '_' . $type );
+		delete_transient( 'itea_ad_stats_aggregated' ); // Clear aggregated cache too
 
 		// Invalidate zone list cache if impression limit might be reached
 		// This is a safety measure to ensure ads are removed from rotation when limits hit
 		// We don't know the zone, so we clear all zone lists
-		$wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_wp_ad_list_%'" );
+		$wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_itea_ad_list_%'" );
 	}
 
 	public static function get_visitor_country() {
@@ -126,12 +126,12 @@ class WP_AdServer_Tracking {
 	 * Get total stats for an ad with transient caching.
 	 */
 	public static function get_total_stats( $ad_id, $type ) {
-		$cache_key = 'wp_ad_stats_' . $ad_id . '_' . $type;
+		$cache_key = 'itea_ad_stats_' . $ad_id . '_' . $type;
 		$total = get_transient( $cache_key );
 
 		if ( false === $total ) {
 			global $wpdb;
-			$table_name = $wpdb->prefix . 'wp_adserver_tracking';
+			$table_name = $wpdb->prefix . 'ITEA_AdServer_Tracking';
 
 			$total = (int) $wpdb->get_var( $wpdb->prepare(
 				"SELECT COUNT(*) FROM $table_name WHERE ad_id = %d AND event_type = %s",
@@ -150,7 +150,7 @@ class WP_AdServer_Tracking {
 	 */
 	public static function get_ad_stats( $ad_id, $days = 7 ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'wp_adserver_tracking';
+		$table_name = $wpdb->prefix . 'ITEA_AdServer_Tracking';
 		$results = array();
 
 		for ( $i = 0; $i < $days; $i++ ) {
@@ -197,7 +197,7 @@ class WP_AdServer_Tracking {
 	 * Get aggregated stats for reporting.
 	 */
 	public static function get_aggregated_stats( $args = array() ) {
-		$cache_key = 'wp_ad_stats_aggregated_' . md5( serialize( $args ) );
+		$cache_key = 'itea_ad_stats_aggregated_' . md5( serialize( $args ) );
 		$results = get_transient( $cache_key );
 
 		if ( false !== $results ) {
@@ -205,7 +205,7 @@ class WP_AdServer_Tracking {
 		}
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'wp_adserver_tracking';
+		$table_name = $wpdb->prefix . 'ITEA_AdServer_Tracking';
 
 		$defaults = array(
 			'days'    => 30,
@@ -245,7 +245,7 @@ class WP_AdServer_Tracking {
 				break;
 		}
 
-		$sql = "SELECT $select, 
+		$sql = "SELECT $select,
 				SUM(CASE WHEN event_type = 'impression' THEN 1 ELSE 0 END) as impressions,
 				SUM(CASE WHEN event_type = 'click' THEN 1 ELSE 0 END) as clicks
 				FROM $table_name
@@ -254,7 +254,7 @@ class WP_AdServer_Tracking {
 				ORDER BY label ASC";
 
 		$results = $wpdb->get_results( $sql );
-		
+
 		// Cache for 1 hour (aggregated stats don't need to be real-time in reports)
 		set_transient( $cache_key, $results, HOUR_IN_SECONDS );
 
@@ -262,14 +262,14 @@ class WP_AdServer_Tracking {
 	}
 
 	public static function handle_script_request() {
-		if ( isset( $_GET['wp_ad_serve'] ) ) {
+		if ( isset( $_GET['itea_ad_serve'] ) ) {
 			header( 'Content-Type: application/javascript' );
 			$zone = isset( $_GET['zone'] ) ? sanitize_text_field( wp_unslash( $_GET['zone'] ) ) : '';
 			$uid  = isset( $_GET['uid'] ) ? sanitize_text_field( wp_unslash( $_GET['uid'] ) ) : '';
-			
+
 			$debug_info = '';
-			$ad_html = WP_AdServer_Renderer::render_ad( $zone, $debug_info );
-			
+			$ad_html = ITEA_AdServer_Renderer::render_ad( $zone, $debug_info );
+
 			if ( ! $ad_html ) {
 				if ( current_user_can( 'manage_options' ) ) {
 					$error_msg = 'Iteearmah Ad Rotation and Analytics: No eligible ads found for zone "' . esc_html( $zone ) . '".';
@@ -293,13 +293,13 @@ class WP_AdServer_Tracking {
 						if (!container) return;
 
 						var xhr = new XMLHttpRequest();
-						xhr.open('GET', " . wp_json_encode( admin_url( 'admin-ajax.php' ) . '?action=wp_adserver_get_ad&zone=' . urlencode( $zone ) ) . ", true);
+						xhr.open('GET', " . wp_json_encode( admin_url( 'admin-ajax.php' ) . '?action=itea_adserver_get_ad&zone=' . urlencode( $zone ) ) . ", true);
 						xhr.onload = function() {
 							if (xhr.status >= 200 && xhr.status < 400) {
 								var response = JSON.parse(xhr.responseText);
 								if (response.success && response.data.html) {
-    					container.innerHTML = response.data.html;
-									
+								container.innerHTML = response.data.html;
+
 									// Execute scripts
 									var scripts = container.getElementsByTagName('script');
 									var scriptsCount = scripts.length;

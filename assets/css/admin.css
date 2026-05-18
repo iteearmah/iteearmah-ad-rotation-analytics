@@ -1,4 +1,4 @@
-.wp-adserver-settings .card {
+.itea-adserver-settings .card {
     background: #fff;
     border: 1px solid #ccd0d4;
     border-radius: 4px;
@@ -8,92 +8,92 @@
     max-width: 100% !important;
 }
 
-.wp-adserver-settings .nav-tab-wrapper {
+.itea-adserver-settings .nav-tab-wrapper {
     margin-top: 20px;
 }
 
-.wp-adserver-settings .matrix-container table {
+.itea-adserver-settings .matrix-container table {
     margin-top: 10px;
     border-radius: 4px;
     overflow: hidden;
 }
 
-.wp-adserver-settings .matrix-container th.cap-column {
+.itea-adserver-settings .matrix-container th.cap-column {
     text-align: center;
     vertical-align: middle;
     font-size: 11px;
     padding: 10px 5px;
 }
 
-.wp-adserver-settings .matrix-container td.cap-check {
+.itea-adserver-settings .matrix-container td.cap-check {
     text-align: center;
     vertical-align: middle;
 }
 
-.wp-adserver-settings .matrix-container td.cap-check input[type="checkbox"] {
+.itea-adserver-settings .matrix-container td.cap-check input[type="checkbox"] {
     margin: 0;
 }
 
-.wp-adserver-settings .role-name {
+.itea-adserver-settings .role-name {
     width: 150px;
     font-size: 14px;
 }
 
-.wp-adserver-settings .description {
+.itea-adserver-settings .description {
     font-style: italic;
     color: #646970;
 }
 
-.wp-adserver-settings .button-hero {
+.itea-adserver-settings .button-hero {
     margin-top: 20px !important;
 }
 
-.wp-adserver-settings tr:hover td {
+.itea-adserver-settings tr:hover td {
     background-color: #f0f6fb !important;
 }
 
-.wp-adserver-settings .matrix-container th {
+.itea-adserver-settings .matrix-container th {
     background: #f6f7f7;
 }
 
 /* SCF Field Adjustments */
-.wp-adserver-settings .acf-field {
+.itea-adserver-settings .acf-field {
     border-top: none !important;
     padding: 10px 0 !important;
 }
 
-.wp-adserver-settings .acf-label label {
+.itea-adserver-settings .acf-label label {
     font-weight: 600;
 }
 
 /* Status Toggle Styles */
-.wp-ad-status-toggle .dashicons {
+.itea-ad-status-toggle .dashicons {
     transition: transform 0.1s ease-in-out;
 }
 
-.wp-ad-status-toggle:hover .dashicons {
+.itea-ad-status-toggle:hover .dashicons {
     transform: scale(1.2);
 }
 
 /* Reports Styles */
-.wp-adserver-reports .report-filters {
+.itea-adserver-reports .report-filters {
     padding: 15px;
     margin-bottom: 20px;
 }
 
-.wp-adserver-reports .report-filters label {
+.itea-adserver-reports .report-filters label {
     font-weight: 600;
     margin-right: 8px;
 }
 
-.wp-adserver-reports .stats-overview {
+.itea-adserver-reports .stats-overview {
     display: flex;
     gap: 20px;
     margin-bottom: 20px;
     width: 100%;
 }
 
-.wp-adserver-reports .stat-card {
+.itea-adserver-reports .stat-card {
     flex: 1;
     background: #fff;
     border: 1px solid #ccd0d4;
@@ -108,12 +108,12 @@
     max-width: 100% !important;
 }
 
-.wp-adserver-reports .stat-card:hover {
+.itea-adserver-reports .stat-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,.1);
 }
 
-.wp-adserver-reports .stat-icon {
+.itea-adserver-reports .stat-icon {
     background: #f0f6fb;
     color: #2271b1;
     width: 48px;
@@ -124,17 +124,17 @@
     justify-content: center;
 }
 
-.wp-adserver-reports .stat-icon .dashicons {
+.itea-adserver-reports .stat-icon .dashicons {
     font-size: 24px;
     width: 24px;
     height: 24px;
 }
 
-.wp-adserver-reports .stat-content {
+.itea-adserver-reports .stat-content {
     flex: 1;
 }
 
-.wp-adserver-reports .stat-card h3 {
+.itea-adserver-reports .stat-card h3 {
     margin: 0 0 5px 0;
     font-size: 13px;
     text-transform: uppercase;
@@ -143,24 +143,24 @@
     color: #646970;
 }
 
-.wp-adserver-reports .stat-value {
+.itea-adserver-reports .stat-value {
     font-size: 28px;
     line-height: 1;
     font-weight: 800;
     color: #1d2327;
 }
 
-.wp-adserver-reports .stat-card.stat-clicks .stat-icon {
+.itea-adserver-reports .stat-card.stat-clicks .stat-icon {
     background: #fcf0f1;
     color: #d63638;
 }
 
-.wp-adserver-reports .stat-card.stat-ctr .stat-icon {
+.itea-adserver-reports .stat-card.stat-ctr .stat-icon {
     background: #f0fdf4;
     color: #00a32a;
 }
 
-.wp-adserver-reports .chart-container {
+.itea-adserver-reports .chart-container {
     padding: 25px;
     margin-bottom: 25px;
     border-radius: 8px;
@@ -170,20 +170,20 @@
     max-width: 100% !important;
 }
 
-.wp-adserver-reports h2 {
+.itea-adserver-reports h2 {
     font-size: 18px;
     margin-bottom: 20px;
     font-weight: 600;
 }
 
-.wp-adserver-reports .reports-grid {
+.itea-adserver-reports .reports-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
     margin-top: 25px;
 }
 
-.wp-adserver-reports .reports-grid .card {
+.itea-adserver-reports .reports-grid .card {
     margin: 0;
     border-radius: 8px;
     padding: 25px;
@@ -191,7 +191,7 @@
     max-width: 100% !important;
 }
 
-.wp-adserver-reports .report-filters.card {
+.itea-adserver-reports .report-filters.card {
     border-radius: 8px;
     padding: 20px;
     display: flex;
@@ -204,7 +204,7 @@
     max-width: 100% !important;
 }
 
-.wp-adserver-reports .report-filters form {
+.itea-adserver-reports .report-filters form {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -212,54 +212,54 @@
     flex: 1;
 }
 
-.wp-adserver-reports .report-filters .filter-group {
+.itea-adserver-reports .report-filters .filter-group {
     display: flex;
     align-items: center;
     white-space: nowrap;
     width: auto;
 }
 
-.wp-adserver-reports .report-filters select {
+.itea-adserver-reports .report-filters select {
     min-width: 160px;
     margin-left: 5px;
 }
 
-.wp-adserver-reports .report-filters .button {
+.itea-adserver-reports .report-filters .button {
     margin: 0;
 }
 
-.wp-adserver-reports .report-actions {
+.itea-adserver-reports .report-actions {
     display: flex;
     align-items: center;
 }
 
 @media (max-width: 782px) {
-    .wp-adserver-reports .stats-overview {
+    .itea-adserver-reports .stats-overview {
         flex-direction: column;
     }
     
-    .wp-adserver-reports .reports-grid {
+    .itea-adserver-reports .reports-grid {
         grid-template-columns: 1fr;
     }
 
-    .wp-adserver-reports .report-filters.card {
+    .itea-adserver-reports .report-filters.card {
         justify-content: center;
         text-align: center;
     }
 
-    .wp-adserver-reports .report-filters form {
+    .itea-adserver-reports .report-filters form {
         justify-content: center;
         flex: none;
         width: 100%;
     }
 
-    .wp-adserver-reports .report-filters .filter-group {
+    .itea-adserver-reports .report-filters .filter-group {
         width: 100%;
         flex-direction: column;
         align-items: center;
     }
 
-    .wp-adserver-reports .report-filters select {
+    .itea-adserver-reports .report-filters select {
         width: 100%;
         margin: 5px 0 0 0;
     }

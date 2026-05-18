@@ -4,7 +4,7 @@
 Plugin Name: Iteearmah Ad Rotation and Analytics
 Plugin URI: https://github.com/iteearmah/wp-adserver
 Description: A specialized plugin to manage, rotate, track, and serve advertisements.
-Version: 1.7.1
+Version: 1.8.0
 Author: Samuel Attoh Armah
 Author URI: https://github.com/iteearmah
 License: GPL2
@@ -16,17 +16,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WP_ADSERVER_VERSION', '1.7.1' );
+define( 'ITEA_ADSERVER_VERSION', '1.8.0' );
 
 // Load the modular system
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-wp-adserver-loader.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-itea-adserver-loader.php';
 
 /**
  * Check if Secure Custom Fields is active
  */
-function wp_adserver_check_dependencies() {
-	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
-		add_action( 'admin_notices', 'wp_adserver_scf_missing_notice' );
+function itea_adserver_check_dependencies() {
+	if ( ! function_exists( 'acf_add_local_field_group' ) && ! class_exists( 'ACF' ) ) {
+		add_action( 'admin_notices', 'itea_adserver_scf_missing_notice' );
 		return false;
 	}
 	return true;
@@ -35,13 +35,13 @@ function wp_adserver_check_dependencies() {
 /**
  * Display admin notice if SCF is missing
  */
-function wp_adserver_scf_missing_notice() {
+function itea_adserver_scf_missing_notice() {
 	if ( ! current_user_can( 'activate_plugins' ) ) {
 		return;
 	}
 
 	$screen = get_current_screen();
-	if ( ! $screen || ( $screen->parent_base !== 'edit.php?post_type=wp_ad' && $screen->id !== 'plugins' ) ) {
+	if ( ! $screen || ( $screen->parent_base !== 'edit.php?post_type=itea_ad' && $screen->id !== 'plugins' ) ) {
 		return;
 	}
 	?>
@@ -57,18 +57,18 @@ function wp_adserver_scf_missing_notice() {
 /**
  * Initialize the plugin
  */
-function wp_adserver_init() {
-	wp_adserver_check_dependencies();
-	new WP_AdServer_Loader();
+function itea_adserver_init() {
+	itea_adserver_check_dependencies();
+	new ITEA_AdServer_Loader();
 }
 
 /**
  * Activate the plugin
  */
-function wp_adserver_activate() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-wp-adserver-tracking.php';
-	WP_AdServer_Tracking::create_tables();
+function itea_adserver_activate() {
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-itea-adserver-tracking.php';
+	ITEA_AdServer_Tracking::create_tables();
 }
-register_activation_hook( __FILE__, 'wp_adserver_activate' );
+register_activation_hook( __FILE__, 'itea_adserver_activate' );
 
-wp_adserver_init();
+itea_adserver_init();

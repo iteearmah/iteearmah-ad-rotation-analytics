@@ -1,3 +1,14 @@
+= 1.8.0 =
+* Added safety checks for get_field() and acf_add_local_field_group() to prevent crashes when Secure Custom Fields is not active.
+* Refined cache clearing logic to target only the plugin's custom post type.
+* Improved performance in the reporting dashboard by limiting ad filtering to the 100 most recent ads.
+* Standardized asset versioning to use the plugin's version constant.
+* Hardened dependency checks to support both 'Secure Custom Fields' and standard 'ACF' naming conventions.
+
+= 1.7.2 =
+* Removed external dependency on Chart.js CDN.
+* Included Chart.js locally in the plugin to comply with WordPress.org guidelines.
+
 = 1.7.1 =
 * Renamed plugin to "Iteearmah Ad Rotation and Analytics" and updated slug to "iteearmah-ad-rotation-analytics".
 * Updated text domain to "iteearmah-ad-rotation-analytics".
@@ -44,12 +55,23 @@
 = 1.0.0 =
 * Initial release.
 * Modular architecture for better maintainability.
-* Custom post type `wp_ad` for structured ad management.
-* Weighted rotation system using `[wp_adserver]` shortcode.
+* Custom post type `itea_ad` for structured ad management.
+* Weighted rotation system using `[itea_adserver]` shortcode.
 * Advanced Geo-targeting capabilities.
 * Ad scheduling and performance capping (impressions/clicks).
 * Zone-based ad delivery.
 * Detailed impression and click tracking with admin dashboard statistics.
+
+1.8.0 - 2026-05-18
+- Added safety checks for get_field() and acf_add_local_field_group().
+- Refined cache clearing logic for custom post types.
+- Improved dashboard performance by limiting ad filtering.
+- Standardized asset versioning.
+- Hardened dependency checks for SCF/ACF.
+
+1.7.2 - 2026-05-18
+- Removed external dependency on Chart.js CDN.
+- Included Chart.js locally in the plugin.
 
 1.7.1 - 2026-05-18
 - Renamed plugin to "Iteearmah Ad Rotation and Analytics".

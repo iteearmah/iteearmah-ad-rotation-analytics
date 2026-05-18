@@ -4,17 +4,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class WP_AdServer_Admin {
+class ITEA_AdServer_Admin {
 
 	public static function init() {
 		add_action( 'add_meta_boxes', array( __CLASS__, 'add_stats_meta_box' ), 10, 2 );
-		add_filter( 'manage_wp_ad_posts_columns', array( __CLASS__, 'add_custom_columns' ) );
-		add_action( 'manage_wp_ad_posts_custom_column', array( __CLASS__, 'render_custom_columns' ), 10, 2 );
-		add_filter( 'manage_edit-wp_ad_sortable_columns', array( __CLASS__, 'make_columns_sortable' ) );
+		add_filter( 'manage_itea_ad_posts_columns', array( __CLASS__, 'add_custom_columns' ) );
+		add_action( 'manage_itea_ad_posts_custom_column', array( __CLASS__, 'render_custom_columns' ), 10, 2 );
+		add_filter( 'manage_edit-itea_ad_sortable_columns', array( __CLASS__, 'make_columns_sortable' ) );
 
 		// Row actions
 		add_filter( 'post_row_actions', array( __CLASS__, 'add_duplicate_link' ), 10, 2 );
-		add_action( 'admin_action_wp_adserver_duplicate_ad', array( __CLASS__, 'handle_duplicate_ad' ) );
+		add_action( 'admin_action_itea_adserver_duplicate_ad', array( __CLASS__, 'handle_duplicate_ad' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'show_duplicate_notice' ) );
 
 		// Ad Zone Taxonomy columns
@@ -42,7 +42,7 @@ class WP_AdServer_Admin {
 		add_action( 'admin_init', array( __CLASS__, 'handle_import' ) );
 
 		// AJAX Toggle Ad Status
-		add_action( 'wp_ajax_wp_adserver_toggle_status', array( __CLASS__, 'ajax_toggle_status' ) );
+		add_action( 'wp_ajax_itea_adserver_toggle_status', array( __CLASS__, 'ajax_toggle_status' ) );
 	}
 
 	/**
@@ -50,9 +50,9 @@ class WP_AdServer_Admin {
 	 */
 	public static function enqueue_admin_assets( $hook ) {
 		$screen = get_current_screen();
-		if ( $screen && $screen->post_type === 'wp_ad' ) {
-   wp_enqueue_style( 'wp-adserver-admin', plugins_url( '../assets/css/admin.css', __FILE__ ), array(), WP_ADSERVER_VERSION );
-			wp_enqueue_script( 'wp-adserver-admin', plugins_url( '../assets/js/admin.js', __FILE__ ), array( 'jquery' ), WP_ADSERVER_VERSION, true );
+		if ( $screen && $screen->post_type === 'itea_ad' ) {
+   wp_enqueue_style( 'itea-adserver-admin', plugins_url( '../assets/css/admin.css', __FILE__ ), array(), ITEA_ADSERVER_VERSION );
+			wp_enqueue_script( 'itea-adserver-admin', plugins_url( '../assets/js/admin.js', __FILE__ ), array( 'jquery' ), ITEA_ADSERVER_VERSION, true );
 		}
 	}
 
@@ -61,11 +61,11 @@ class WP_AdServer_Admin {
 	 */
 	public static function add_tools_menu() {
 		add_submenu_page(
-			'edit.php?post_type=wp_ad',
+			'edit.php?post_type=itea_ad',
 			esc_html__( 'Tools', 'iteearmah-ad-rotation-analytics' ),
 			esc_html__( 'Tools', 'iteearmah-ad-rotation-analytics' ),
 			'manage_options',
-			'wp-adserver-tools',
+			'itea-adserver-tools',
 			array( __CLASS__, 'render_tools_page' )
 		);
 	}
@@ -83,8 +83,8 @@ class WP_AdServer_Admin {
 				<h2><?php esc_html_e( 'Export Ads', 'iteearmah-ad-rotation-analytics' ); ?></h2>
 				<p><?php esc_html_e( 'Export all advertisements and their settings to a JSON file.', 'iteearmah-ad-rotation-analytics' ); ?></p>
 				<form method="post" action="">
-					<?php wp_nonce_field( 'wp_adserver_export', 'wp_adserver_export_nonce' ); ?>
-					<input type="hidden" name="wp_adserver_action" value="export_ads">
+					<?php wp_nonce_field( 'itea_adserver_export', 'itea_adserver_export_nonce' ); ?>
+					<input type="hidden" name="itea_adserver_action" value="export_ads">
 					<?php submit_button( esc_html__( 'Export Ads to JSON', 'iteearmah-ad-rotation-analytics' ), 'primary', 'submit_export' ); ?>
 				</form>
 			</div>
@@ -93,8 +93,8 @@ class WP_AdServer_Admin {
 				<h2><?php esc_html_e( 'Import Ads', 'iteearmah-ad-rotation-analytics' ); ?></h2>
 				<p><?php esc_html_e( 'Import advertisements from a previously exported JSON file.', 'iteearmah-ad-rotation-analytics' ); ?></p>
 				<form method="post" action="" enctype="multipart/form-data">
-					<?php wp_nonce_field( 'wp_adserver_import', 'wp_adserver_import_nonce' ); ?>
-					<input type="hidden" name="wp_adserver_action" value="import_ads">
+					<?php wp_nonce_field( 'itea_adserver_import', 'itea_adserver_import_nonce' ); ?>
+					<input type="hidden" name="itea_adserver_action" value="import_ads">
 					<input type="file" name="import_file" accept=".json" required>
 					<?php submit_button( esc_html__( 'Import Ads from JSON', 'iteearmah-ad-rotation-analytics' ), 'secondary', 'submit_import' ); ?>
 				</form>
@@ -107,11 +107,11 @@ class WP_AdServer_Admin {
 	 * Handle Export.
 	 */
 	public static function handle_export() {
-		if ( ! isset( $_POST['wp_adserver_action'] ) || $_POST['wp_adserver_action'] !== 'export_ads' ) {
+		if ( ! isset( $_POST['itea_adserver_action'] ) || $_POST['itea_adserver_action'] !== 'export_ads' ) {
 			return;
 		}
 
-		if ( ! check_admin_referer( 'wp_adserver_export', 'wp_adserver_export_nonce' ) ) {
+		if ( ! check_admin_referer( 'itea_adserver_export', 'itea_adserver_export_nonce' ) ) {
 			return;
 		}
 
@@ -120,7 +120,7 @@ class WP_AdServer_Admin {
 		}
 
 		$args = array(
-			'post_type'      => 'wp_ad',
+			'post_type'      => 'itea_ad',
 			'post_status'    => array( 'publish', 'draft', 'private', 'pending' ),
 			'posts_per_page' => -1,
 		);
@@ -143,7 +143,7 @@ class WP_AdServer_Admin {
 		}
 
   $json_data = wp_json_encode( $export_data, JSON_PRETTY_PRINT );
-  $filename = 'wp-adserver-export-' . gmdate( 'Y-m-d-H-i-s' ) . '.json';
+  $filename = 'itea-adserver-export-' . gmdate( 'Y-m-d-H-i-s' ) . '.json';
 
 		header( 'Content-Type: application/json' );
 		header( 'Content-Disposition: attachment; filename=' . $filename );
@@ -156,11 +156,11 @@ class WP_AdServer_Admin {
 	 * Handle Import.
 	 */
 	public static function handle_import() {
-		if ( ! isset( $_POST['wp_adserver_action'] ) || $_POST['wp_adserver_action'] !== 'import_ads' ) {
+		if ( ! isset( $_POST['itea_adserver_action'] ) || $_POST['itea_adserver_action'] !== 'import_ads' ) {
 			return;
 		}
 
-		if ( ! check_admin_referer( 'wp_adserver_import', 'wp_adserver_import_nonce' ) ) {
+		if ( ! check_admin_referer( 'itea_adserver_import', 'itea_adserver_import_nonce' ) ) {
 			return;
 		}
 
@@ -195,7 +195,7 @@ class WP_AdServer_Admin {
 				'post_title'   => sanitize_text_field( $ad_data['post_title'] ),
 				'post_content' => wp_kses_post( $ad_data['post_content'] ),
 				'post_status'  => $import_status,
-				'post_type'    => 'wp_ad',
+				'post_type'    => 'itea_ad',
 			);
 
 			$new_id = wp_insert_post( $new_post );
@@ -224,7 +224,7 @@ class WP_AdServer_Admin {
 
 		// Clear cache
 		global $wpdb;
-		$wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_wp_ad_list_%'" );
+		$wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_itea_ad_list_%'" );
 
 		add_action( 'admin_notices', function() use ( $count ) {
 			echo '<div class="updated"><p>' . sprintf( esc_html__( 'Successfully imported %d advertisements.', 'iteearmah-ad-rotation-analytics' ), $count ) . '</p></div>';
@@ -237,7 +237,7 @@ class WP_AdServer_Admin {
 	public static function add_dashboard_widget() {
 		if ( current_user_can( 'edit_ads' ) ) {
 			wp_add_dashboard_widget(
-				'wp_adserver_stats_widget',
+				'itea_adserver_stats_widget',
 				esc_html__( 'Iteearmah Ad Rotation and Analytics Quick Stats', 'iteearmah-ad-rotation-analytics' ),
 				array( __CLASS__, 'render_dashboard_widget' )
 			);
@@ -249,10 +249,10 @@ class WP_AdServer_Admin {
 	 */
 	public static function render_dashboard_widget() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'wp_adserver_tracking';
+		$table_name = $wpdb->prefix . 'ITEA_AdServer_Tracking';
 
 		// Total ads count
-		$total_ads = wp_count_posts( 'wp_ad' )->publish;
+		$total_ads = wp_count_posts( 'itea_ad' )->publish;
 
 		// Total impressions and clicks from the custom tracking table
 		$stats = $wpdb->get_row( "SELECT
@@ -265,7 +265,7 @@ class WP_AdServer_Admin {
 
 		$ctr = ( $total_impressions > 0 ) ? round( ( $total_clicks / $total_impressions ) * 100, 2 ) : 0;
 
-		echo '<div class="wp-adserver-dashboard-widget">';
+		echo '<div class="itea-adserver-dashboard-widget">';
 		echo '<ul>';
 		echo '<li><strong>' . esc_html__( 'Published Ads:', 'iteearmah-ad-rotation-analytics' ) . '</strong> ' . esc_html( $total_ads ) . '</li>';
 		echo '<li><strong>' . esc_html__( 'Total Impressions:', 'iteearmah-ad-rotation-analytics' ) . '</strong> ' . esc_html( number_format( $total_impressions ) ) . '</li>';
@@ -273,21 +273,21 @@ class WP_AdServer_Admin {
 		echo '<li><strong>' . esc_html__( 'Overall CTR:', 'iteearmah-ad-rotation-analytics' ) . '</strong> ' . esc_html( $ctr ) . '%</li>';
 		echo '</ul>';
 		echo '<p>';
-		echo '<a href="' . esc_url( admin_url( 'edit.php?post_type=wp_ad' ) ) . '" class="button button-primary">' . esc_html__( 'Manage Ads', 'iteearmah-ad-rotation-analytics' ) . '</a> ';
-		echo '<a href="' . esc_url( admin_url( 'post-new.php?post_type=wp_ad' ) ) . '" class="button">' . esc_html__( 'Add New Ad', 'iteearmah-ad-rotation-analytics' ) . '</a>';
+		echo '<a href="' . esc_url( admin_url( 'edit.php?post_type=itea_ad' ) ) . '" class="button button-primary">' . esc_html__( 'Manage Ads', 'iteearmah-ad-rotation-analytics' ) . '</a> ';
+		echo '<a href="' . esc_url( admin_url( 'post-new.php?post_type=itea_ad' ) ) . '" class="button">' . esc_html__( 'Add New Ad', 'iteearmah-ad-rotation-analytics' ) . '</a>';
 		echo '</p>';
 		echo '</div>';
 	}
 
 	public static function redirect_after_save( $location, $post_id ) {
-		if ( get_post_type( $post_id ) === 'wp_ad' ) {
+		if ( get_post_type( $post_id ) === 'itea_ad' ) {
 			global $wpdb;
-			$wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_wp_ad_list_%'" );
+			$wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_itea_ad_list_%'" );
 
 			if ( isset( $_POST['publish'] ) ) {
 				// Only redirect to list if it was a new post being published
 				if ( isset( $_POST['original_post_status'] ) && $_POST['original_post_status'] === 'auto-draft' ) {
-					$location = admin_url( 'edit.php?post_type=wp_ad' );
+					$location = admin_url( 'edit.php?post_type=itea_ad' );
 				}
 			}
 		}
@@ -298,15 +298,15 @@ class WP_AdServer_Admin {
 	 * Add "Duplicate" link to post row actions.
 	 */
 	public static function add_duplicate_link( $actions, $post ) {
-		if ( $post->post_type !== 'wp_ad' || ! current_user_can( 'edit_ads' ) ) {
+		if ( $post->post_type !== 'itea_ad' || ! current_user_can( 'edit_ads' ) ) {
 			return $actions;
 		}
 
 		$url = add_query_arg(
 			array(
-				'action' => 'wp_adserver_duplicate_ad',
+				'action' => 'itea_adserver_duplicate_ad',
 				'post'   => $post->ID,
-				'nonce'  => wp_create_nonce( 'wp_adserver_duplicate_' . $post->ID ),
+				'nonce'  => wp_create_nonce( 'itea_adserver_duplicate_' . $post->ID ),
 			),
 			admin_url( 'admin.php' )
 		);
@@ -328,7 +328,7 @@ class WP_AdServer_Admin {
 		$post_id = isset( $_GET['post'] ) ? intval( $_GET['post'] ) : 0;
 		$nonce   = isset( $_GET['nonce'] ) ? sanitize_text_field( wp_unslash( $_GET['nonce'] ) ) : '';
 
-		if ( ! $post_id || ! wp_verify_nonce( $nonce, 'wp_adserver_duplicate_' . $post_id ) ) {
+		if ( ! $post_id || ! wp_verify_nonce( $nonce, 'itea_adserver_duplicate_' . $post_id ) ) {
 			wp_die( esc_html__( 'Security check failed.', 'iteearmah-ad-rotation-analytics' ) );
 		}
 
@@ -337,7 +337,7 @@ class WP_AdServer_Admin {
 		}
 
 		$post = get_post( $post_id );
-		if ( ! $post || $post->post_type !== 'wp_ad' ) {
+		if ( ! $post || $post->post_type !== 'itea_ad' ) {
 			wp_die( esc_html__( 'Post not found.', 'iteearmah-ad-rotation-analytics' ) );
 		}
 
@@ -370,7 +370,7 @@ class WP_AdServer_Admin {
 		$post_meta = get_post_custom( $post_id );
 		foreach ( $post_meta as $key => $values ) {
 			// Skip internal WP meta and tracking stats
-			if ( strpos( $key, '_wp_ad_stats_' ) === 0 || in_array( $key, array( '_wp_ad_impressions', '_wp_ad_clicks' ) ) ) {
+			if ( strpos( $key, '_itea_ad_stats_' ) === 0 || in_array( $key, array( '_itea_ad_impressions', '_itea_ad_clicks' ) ) ) {
 				continue;
 			}
 
@@ -379,7 +379,7 @@ class WP_AdServer_Admin {
 			}
 		}
 
-		wp_safe_redirect( add_query_arg( 'duplicated', 1, admin_url( 'edit.php?post_type=wp_ad' ) ) );
+		wp_safe_redirect( add_query_arg( 'duplicated', 1, admin_url( 'edit.php?post_type=itea_ad' ) ) );
 		exit;
 	}
 
@@ -395,14 +395,14 @@ class WP_AdServer_Admin {
 	public static function handle_upload_prefilter( $file ) {
 		if ( isset( $_REQUEST['post_id'] ) ) {
 			$post_id = intval( $_REQUEST['post_id'] );
-			if ( get_post_type( $post_id ) === 'wp_ad' ) {
+			if ( get_post_type( $post_id ) === 'itea_ad' ) {
 				add_filter( 'upload_dir', array( __CLASS__, 'custom_upload_dir' ) );
 			}
 		} elseif ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] === 'upload-attachment' ) {
 			// This might be an AJAX upload from the media library, we check the context if possible
 			// SCF uses the standard media library. We can check if it's coming from our post type.
 			$referer = wp_get_referer();
-			if ( $referer && strpos( $referer, 'post_type=wp_ad' ) !== false ) {
+			if ( $referer && strpos( $referer, 'post_type=itea_ad' ) !== false ) {
 				add_filter( 'upload_dir', array( __CLASS__, 'custom_upload_dir' ) );
 			}
 		}
@@ -423,15 +423,15 @@ class WP_AdServer_Admin {
 
 	public static function add_stats_meta_box( $post_type, $post ) {
 		// Only show stats on existing ads, not when creating a new one
-		if ( 'wp_ad' !== $post_type || ! $post instanceof WP_Post || 'auto-draft' === $post->post_status ) {
+		if ( 'itea_ad' !== $post_type || ! $post instanceof WP_Post || 'auto-draft' === $post->post_status ) {
 			return;
 		}
 
 		add_meta_box(
-			'wp_ad_stats',
+			'itea_ad_stats',
 			'Ad Statistics (Last 7 Days)',
 			array( __CLASS__, 'render_stats_meta_box' ),
-			'wp_ad',
+			'itea_ad',
 			'normal',
 			'high'
 		);
@@ -442,7 +442,7 @@ class WP_AdServer_Admin {
 		echo '<thead><tr><th>' . esc_html__( 'Date', 'iteearmah-ad-rotation-analytics' ) . '</th><th>' . esc_html__( 'Impressions', 'iteearmah-ad-rotation-analytics' ) . '</th><th>' . esc_html__( 'Clicks', 'iteearmah-ad-rotation-analytics' ) . '</th><th>' . esc_html__( 'CTR', 'iteearmah-ad-rotation-analytics' ) . '</th><th>' . esc_html__( 'Top Countries', 'iteearmah-ad-rotation-analytics' ) . '</th></tr></thead>';
 		echo '<tbody>';
 
-		$all_stats = WP_AdServer_Tracking::get_ad_stats( $post->ID, 7 );
+		$all_stats = ITEA_AdServer_Tracking::get_ad_stats( $post->ID, 7 );
 
 		foreach ( $all_stats as $date => $stats ) {
 			$imprs      = isset( $stats['impression'] ) ? intval( $stats['impression'] ) : 0;
@@ -486,9 +486,9 @@ class WP_AdServer_Admin {
 	public static function render_custom_columns( $column, $post_id ) {
 		switch ( $column ) {
 			case 'active':
-				$active = get_field( 'wp_ad_active', $post_id );
-				$nonce  = wp_create_nonce( 'wp_ad_status_' . $post_id );
-				echo '<div class="wp-ad-status-toggle" data-post-id="' . esc_attr( $post_id ) . '" data-nonce="' . esc_attr( $nonce ) . '" style="cursor: pointer; display: inline-block;">';
+				$active = get_field( 'itea_ad_active', $post_id );
+				$nonce  = wp_create_nonce( 'itea_ad_status_' . $post_id );
+				echo '<div class="itea-ad-status-toggle" data-post-id="' . esc_attr( $post_id ) . '" data-nonce="' . esc_attr( $nonce ) . '" style="cursor: pointer; display: inline-block;">';
 				if ( $active === false || $active === 0 ) {
 					echo '<span class="dashicons dashicons-hidden" style="color:#d63638;" title="' . esc_attr__( 'Inactive', 'iteearmah-ad-rotation-analytics' ) . '"></span>';
 				} else {
@@ -497,19 +497,19 @@ class WP_AdServer_Admin {
 				echo '</div>';
 				break;
 			case 'impressions':
-				echo esc_html( WP_AdServer_Tracking::get_total_stats( $post_id, 'impression' ) );
+				echo esc_html( ITEA_AdServer_Tracking::get_total_stats( $post_id, 'impression' ) );
 				break;
 			case 'clicks':
-				echo esc_html( WP_AdServer_Tracking::get_total_stats( $post_id, 'click' ) );
+				echo esc_html( ITEA_AdServer_Tracking::get_total_stats( $post_id, 'click' ) );
 				break;
 			case 'ctr':
-				$impressions = WP_AdServer_Tracking::get_total_stats( $post_id, 'impression' );
-				$clicks = WP_AdServer_Tracking::get_total_stats( $post_id, 'click' );
+				$impressions = ITEA_AdServer_Tracking::get_total_stats( $post_id, 'impression' );
+				$clicks = ITEA_AdServer_Tracking::get_total_stats( $post_id, 'click' );
 				echo esc_html( $impressions > 0 ? round( ( $clicks / $impressions ) * 100, 2 ) : 0 );
 				echo '%';
 				break;
 			case 'weight':
-				$weight = function_exists( 'get_field' ) ? get_field( 'wp_ad_weight', $post_id ) : get_post_meta( $post_id, 'wp_ad_weight', true );
+				$weight = function_exists( 'get_field' ) ? get_field( 'itea_ad_weight', $post_id ) : get_post_meta( $post_id, 'itea_ad_weight', true );
 				echo esc_html( $weight ?: 1 );
 				break;
 		}
@@ -536,11 +536,11 @@ class WP_AdServer_Admin {
 
 		switch ( $column_name ) {
 			case 'zone_shortcode':
-				return '<code>[wp_adserver zone="' . esc_attr( $slug ) . '"]</code>';
+				return '<code>[itea_adserver zone="' . esc_attr( $slug ) . '"]</code>';
 			case 'zone_script':
-				$uid = 'wp-ad-' . $slug;
+				$uid = 'itea-ad-' . $slug;
 				$url = add_query_arg( array(
-					'wp_ad_serve' => 1,
+					'itea_ad_serve' => 1,
 					'zone'        => $slug,
 					'uid'         => $uid,
 				), home_url( '/' ) );
@@ -557,7 +557,7 @@ class WP_AdServer_Admin {
 		$post_id = isset( $_POST['post_id'] ) ? intval( $_POST['post_id'] ) : 0;
 		$nonce   = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
 
-		if ( ! $post_id || ! wp_verify_nonce( $nonce, 'wp_ad_status_' . $post_id ) ) {
+		if ( ! $post_id || ! wp_verify_nonce( $nonce, 'itea_ad_status_' . $post_id ) ) {
 			wp_send_json_error( 'Invalid nonce' );
 		}
 
@@ -565,13 +565,13 @@ class WP_AdServer_Admin {
 			wp_send_json_error( 'Permission denied' );
 		}
 
-		$current_status = get_field( 'wp_ad_active', $post_id );
+		$current_status = get_field( 'itea_ad_active', $post_id );
 		$new_status     = ( $current_status === false || $current_status === 0 ) ? 1 : 0;
 
-		update_field( 'wp_ad_active', $new_status, $post_id );
+		update_field( 'itea_ad_active', $new_status, $post_id );
 
 		global $wpdb;
-		$wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_wp_ad_list_%'" );
+		$wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_itea_ad_list_%'" );
 
 		ob_start();
 		if ( $new_status === 0 ) {

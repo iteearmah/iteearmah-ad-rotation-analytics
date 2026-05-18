@@ -3,7 +3,7 @@ Contributors: iteearmah
 Tags: ads, adserver, advertisement, ad-management, geo-targeting, ad-rotation, tracking, impressions, clicks, ad-zones, scheduling, device-targeting
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 1.7.1
+Stable tag: 1.8.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,7 +39,7 @@ This plugin requires the [Secure Custom Fields](https://wordpress.org/plugins/se
 
 == Installation ==
 
-1. Upload the `wp-adserver` folder to the `/wp-content/plugins/` directory.
+1. Upload the `iteearmah-ad-rotation-analytics` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Install and activate the [Secure Custom Fields](https://wordpress.org/plugins/secure-custom-fields/) plugin.
 4. Go to **Iteearmah Ad Rotation and Analytics** in your admin menu to start creating ads.
@@ -48,7 +48,7 @@ This plugin requires the [Secure Custom Fields](https://wordpress.org/plugins/se
 
 = How do I display an ad? =
 
-Use the shortcode `[wp_adserver zone="your-zone-slug"]` in any post or page. To find the zone slug, go to **Iteearmah Ad Rotation and Analytics > Ad Zones**.
+Use the shortcode `[itea_adserver zone="your-zone-slug"]` in any post or page. To find the zone slug, go to **Iteearmah Ad Rotation and Analytics > Ad Zones**.
 
 = How do I track statistics? =
 
@@ -59,8 +59,8 @@ Statistics for each ad are displayed in the "Ad Statistics" meta box when editin
 1. Go to **Iteearmah Ad Rotation and Analytics > Ad Zones** and create a new zone (e.g., "Sidebar").
 2. Note the **Slug** of the zone you created.
 3. Edit an advertisement and select the zone from the **Ad Zones** box on the right.
-4. Use the shortcode `[wp_adserver zone="sidebar"]` (replace "sidebar" with your slug) to display ads from that zone.
-5. You can also use `<div id="wp-ad-sidebar"></div><script src="https://your-site.com/?wp_ad_serve=1&zone=sidebar&uid=wp-ad-sidebar" async></script>` for remote placement.
+4. Use the shortcode `[itea_adserver zone="sidebar"]` (replace "sidebar" with your slug) to display ads from that zone.
+5. You can also use `<div id="itea-ad-sidebar"></div><script src="https://your-site.com/?itea_ad_serve=1&zone=sidebar&uid=itea-ad-sidebar" async></script>` for remote placement.
 
 = Does this plugin require any external services? =
 
@@ -79,6 +79,21 @@ An admin notice will be displayed prompting you to install the required plugin. 
 5. Dashboard widget showing quick ad performance stats.
 
 == Changelog ==
+
+= 1.8.0 =
+* Added safety checks for get_field() and acf_add_local_field_group() to prevent crashes when Secure Custom Fields is not active.
+* Refined cache clearing logic to target only the plugin's custom post type.
+* Improved performance in the reporting dashboard by limiting ad filtering to the 100 most recent ads.
+* Standardized asset versioning to use the plugin's version constant.
+* Hardened dependency checks to support both 'Secure Custom Fields' and standard 'ACF' naming conventions.
+
+= 1.7.2 =
+* Removed external dependency on Chart.js CDN.
+* Included Chart.js locally in the plugin to comply with WordPress.org guidelines.
+
+= 1.7.1 =
+* Renamed plugin to "Iteearmah Ad Rotation and Analytics" and updated slug to "iteearmah-ad-rotation-analytics".
+* Updated text domain to "iteearmah-ad-rotation-analytics".
 
 = 1.7.0 =
 * Removed hidden .gitkeep file from languages directory to comply with WordPress.org guidelines.
@@ -127,14 +142,23 @@ An admin notice will be displayed prompting you to install the required plugin. 
 = 1.0.0 =
 * Initial release.
 * Modular architecture for better maintainability.
-* Custom post type `wp_ad` for structured ad management.
-* Weighted rotation system using `[wp_adserver]` shortcode.
+* Custom post type `itea_ad` for structured ad management.
+* Weighted rotation system using `[itea_adserver]` shortcode.
 * Advanced geo-targeting capabilities.
 * Ad scheduling and performance capping (impressions/clicks).
 * Zone-based ad delivery.
 * Detailed impression and click tracking with admin dashboard statistics.
 
 == Upgrade Notice ==
+
+= 1.8.0 =
+Security and performance hardening: improved SCF/ACF compatibility and dashboard performance. Recommended for all users.
+
+= 1.7.2 =
+Compliance fix: removed external Chart.js CDN dependency and included it locally.
+
+= 1.7.1 =
+Plugin renamed to "Iteearmah Ad Rotation and Analytics".
 
 = 1.7.0 =
 Compliance fix: replaced hidden .gitkeep with index.php in languages directory.

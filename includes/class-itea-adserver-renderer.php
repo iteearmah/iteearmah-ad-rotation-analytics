@@ -4,24 +4,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class WP_AdServer_Renderer {
+class ITEA_AdServer_Renderer {
 
 	private static $meta_cache = array();
 
 	public static function init() {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
-		add_shortcode( 'wp_adserver', array( __CLASS__, 'render_shortcode' ) );
-		add_shortcode( 'wp_ad_script', array( __CLASS__, 'render_script_shortcode' ) );
+		add_shortcode( 'itea_adserver', array( __CLASS__, 'render_shortcode' ) );
+		add_shortcode( 'itea_ad_script', array( __CLASS__, 'render_script_shortcode' ) );
 
 		// AJAX handlers
-		add_action( 'wp_ajax_nopriv_wp_adserver_get_ad', array( __CLASS__, 'ajax_get_ad' ) );
-		add_action( 'wp_ajax_wp_adserver_get_ad', array( __CLASS__, 'ajax_get_ad' ) );
+		add_action( 'wp_ajax_nopriv_itea_adserver_get_ad', array( __CLASS__, 'ajax_get_ad' ) );
+		add_action( 'wp_ajax_itea_adserver_get_ad', array( __CLASS__, 'ajax_get_ad' ) );
 
 		// Script execution optimization
 		add_filter( 'script_loader_tag', array( __CLASS__, 'add_async_attribute' ), 10, 2 );
 
 		// Clear cache on ad updates
-		add_action( 'save_post_wp_ad', array( __CLASS__, 'clear_ad_list_cache' ) );
+		add_action( 'save_post_itea_ad', array( __CLASS__, 'clear_ad_list_cache' ) );
 		add_action( 'deleted_post', array( __CLASS__, 'clear_ad_list_cache' ) );
 		add_action( 'trashed_post', array( __CLASS__, 'clear_ad_list_cache' ) );
 		add_action( 'untrashed_post', array( __CLASS__, 'clear_ad_list_cache' ) );
@@ -33,7 +33,7 @@ class WP_AdServer_Renderer {
 	 * Clear cache on post status transition.
 	 */
 	public static function clear_cache_on_status_transition( $new_status, $old_status, $post ) {
-		if ( 'wp_ad' === $post->post_type && $new_status !== $old_status ) {
+		if ( 'itea_ad' === $post->post_type && $new_status !== $old_status ) {
 			self::clear_ad_list_cache( $post->ID );
 		}
 	}
@@ -42,35 +42,35 @@ class WP_AdServer_Renderer {
 	 * Clear ad list cache when an ad is saved or deleted.
 	 */
 	public static function clear_ad_list_cache( $post_id ) {
-		if ( get_post_type( $post_id ) !== 'wp_ad' ) {
+		if ( get_post_type( $post_id ) !== 'itea_ad' ) {
 			return;
 		}
 
 		// Use versioning to invalidate all ad list transients at once
 		$new_version = time();
-		update_option( 'wp_adserver_cache_version', $new_version );
+		update_option( 'itea_adserver_cache_version', $new_version );
 	}
 
 	/**
 	 * Clear ad list cache when terms are changed.
 	 */
 	public static function clear_ad_list_cache_on_term_change( $object_id, $terms, $tt_ids, $taxonomy ) {
-		if ( 'ad_zone' === $taxonomy ) {
+		if ( 'itea_ad_zone' === $taxonomy ) {
 			self::clear_ad_list_cache( $object_id );
 		}
 	}
 
 	public static function add_async_attribute( $tag, $handle ) {
-		if ( 'wp-adserver-js' !== $handle ) {
+		if ( 'itea-adserver-js' !== $handle ) {
 			return $tag;
 		}
 		return str_replace( ' src', ' async defer src', $tag );
 	}
 
 	public static function enqueue_scripts() {
-  wp_register_style( 'iteearmah-ad-rotation-analytics', plugins_url( '../assets/css/style.css', __FILE__ ), array(), WP_ADSERVER_VERSION );
-		wp_register_script( 'wp-adserver-js', plugins_url( '../assets/js/wp-adserver.js', __FILE__ ), array(), WP_ADSERVER_VERSION, true );
-		wp_localize_script( 'wp-adserver-js', 'wpIteearmah Ad Rotation and Analytics', array(
+  wp_register_style( 'iteearmah-ad-rotation-analytics', plugins_url( '../assets/css/style.css', __FILE__ ), array(), ITEA_ADSERVER_VERSION );
+		wp_register_script( 'itea-adserver-js', plugins_url( '../assets/js/wp-adserver.js', __FILE__ ), array(), ITEA_ADSERVER_VERSION, true );
+		wp_localize_script( 'itea-adserver-js', 'iteaAdServerData', array(
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 		) );
 	}
@@ -82,13 +82,13 @@ class WP_AdServer_Renderer {
 
 		// Only enqueue frontend assets if the shortcode is used
 		wp_enqueue_style( 'iteearmah-ad-rotation-analytics' );
-		wp_enqueue_script( 'wp-adserver-js' );
+		wp_enqueue_script( 'itea-adserver-js' );
 
 		$zone_slug = ! empty( $atts['zone'] ) ? strtolower( sanitize_title( $atts['zone'] ) ) : 'default';
-		$uid       = 'wp-ad-' . $zone_slug;
+		$uid       = 'itea-ad-' . $zone_slug;
 
 		return sprintf(
-			'<div id="%s" class="wp-adserver-placeholder" data-zone="%s"></div>',
+			'<div id="%s" class="itea-adserver-placeholder" data-zone="%s"></div>',
 			esc_attr( $uid ),
 			esc_attr( $zone_slug )
 		);
@@ -117,15 +117,15 @@ class WP_AdServer_Renderer {
 		), $atts );
 
 		$zone_slug = ! empty( $atts['zone'] ) ? strtolower( sanitize_title( $atts['zone'] ) ) : 'default';
-		$unique_id = 'wp-ad-' . $zone_slug;
+		$unique_id = 'itea-ad-' . $zone_slug;
 		$url = add_query_arg( array(
-			'wp_ad_serve' => 1,
+			'itea_ad_serve' => 1,
 			'zone'        => $zone_slug,
 			'uid'         => $unique_id,
 		), home_url( '/' ) );
 
 		return sprintf(
-			'<div id="%s" class="wp-adserver-script-container"></div><script src="%s" async></script>',
+			'<div id="%s" class="itea-adserver-script-container"></div><script src="%s" async></script>',
 			esc_attr( $unique_id ),
 			esc_url( $url )
 		);
@@ -134,7 +134,11 @@ class WP_AdServer_Renderer {
 	private static function get_cached_field( $field_name, $post_id ) {
 		$cache_key = $post_id . '_' . $field_name;
 		if ( ! isset( self::$meta_cache[ $cache_key ] ) ) {
-			self::$meta_cache[ $cache_key ] = get_field( $field_name, $post_id );
+			if ( function_exists( 'get_field' ) ) {
+				self::$meta_cache[ $cache_key ] = get_field( $field_name, $post_id );
+			} else {
+				self::$meta_cache[ $cache_key ] = get_post_meta( $post_id, $field_name, true );
+			}
 		}
 		return self::$meta_cache[ $cache_key ];
 	}
@@ -150,16 +154,16 @@ class WP_AdServer_Renderer {
 				INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
 				INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
 				INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-				WHERE p.post_type = 'wp_ad'
+				WHERE p.post_type = 'itea_ad'
 				AND p.post_status = 'publish'
-				AND tt.taxonomy = 'ad_zone'
+				AND tt.taxonomy = 'itea_ad_zone'
 				AND t.slug = %s",
 				$zone_slug
 			) );
 		} else {
 			$ads = $wpdb->get_col(
 				"SELECT ID FROM {$wpdb->posts}
-				WHERE post_type = 'wp_ad'
+				WHERE post_type = 'itea_ad'
 				AND post_status = 'publish'"
 			);
 		}
@@ -176,16 +180,16 @@ class WP_AdServer_Renderer {
 					INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
 					INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
 					INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-					WHERE p.post_type = 'wp_ad'
+					WHERE p.post_type = 'itea_ad'
 					AND p.post_status != 'auto-draft'
-					AND tt.taxonomy = 'ad_zone'
+					AND tt.taxonomy = 'itea_ad_zone'
 					AND t.slug = %s",
 					$zone_slug
 				) );
 			} else {
 				$all_ads_in_zone = $wpdb->get_col(
 					"SELECT ID FROM {$wpdb->posts}
-					WHERE post_type = 'wp_ad'
+					WHERE post_type = 'itea_ad'
 					AND post_status != 'auto-draft'"
 				);
 			}
@@ -217,8 +221,8 @@ class WP_AdServer_Renderer {
 		}
 
 		$eligible_ads = array();
-		$visitor_country = WP_AdServer_Tracking::get_visitor_country();
-		$visitor_device  = WP_AdServer_Tracking::get_visitor_device();
+		$visitor_country = ITEA_AdServer_Tracking::get_visitor_country();
+		$visitor_device  = ITEA_AdServer_Tracking::get_visitor_device();
 		$now = current_time( 'Y-m-d H:i:s' );
 
 		$reasons = array();
@@ -230,15 +234,15 @@ class WP_AdServer_Renderer {
 			$ad_title = get_the_title( $ad_id );
 
 			// Check Active
-			$is_active = self::get_cached_field( 'wp_ad_active', $ad_id );
+			$is_active = self::get_cached_field( 'itea_ad_active', $ad_id );
 			if ( $is_active === false || $is_active === 0 || $is_active === '0' ) {
  			$reasons[] = "Ad '{$ad_title}' (ID: {$ad_id}) is inactive (Value: " . wp_json_encode( $is_active ) . ").";
 				continue;
 			}
 
 			// Check Scheduling
-			$start_date = self::get_cached_field( 'wp_ad_start_date', $ad_id );
-			$end_date   = self::get_cached_field( 'wp_ad_end_date', $ad_id );
+			$start_date = self::get_cached_field( 'itea_ad_start_date', $ad_id );
+			$end_date   = self::get_cached_field( 'itea_ad_end_date', $ad_id );
 
 			if ( $start_date && $now < $start_date ) {
 				$reasons[] = "Ad '{$ad_title}' (ID: {$ad_id}) scheduled to start at {$start_date}. (Current: {$now})";
@@ -250,18 +254,18 @@ class WP_AdServer_Renderer {
 			}
 
 			// Check Limits
-			$limit_impressions = (int) self::get_cached_field( 'wp_ad_limit_impressions', $ad_id );
-			$limit_clicks      = (int) self::get_cached_field( 'wp_ad_limit_clicks', $ad_id );
+			$limit_impressions = (int) self::get_cached_field( 'itea_ad_limit_impressions', $ad_id );
+			$limit_clicks      = (int) self::get_cached_field( 'itea_ad_limit_clicks', $ad_id );
 
 			if ( $limit_impressions > 0 ) {
-				$current_imprs = WP_AdServer_Tracking::get_total_stats( $ad_id, 'impression' );
+				$current_imprs = ITEA_AdServer_Tracking::get_total_stats( $ad_id, 'impression' );
 				if ( (int) $current_imprs >= $limit_impressions ) {
 					$reasons[] = "Ad '{$ad_title}' (ID: {$ad_id}) reached impression limit ({$limit_impressions}). (Current: {$current_imprs})";
 					continue;
 				}
 			}
 			if ( $limit_clicks > 0 ) {
-				$current_clicks = WP_AdServer_Tracking::get_total_stats( $ad_id, 'click' );
+				$current_clicks = ITEA_AdServer_Tracking::get_total_stats( $ad_id, 'click' );
 				if ( (int) $current_clicks >= $limit_clicks ) {
 					$reasons[] = "Ad '{$ad_title}' (ID: {$ad_id}) reached click limit ({$limit_clicks}). (Current: {$current_clicks})";
 					continue;
@@ -269,10 +273,10 @@ class WP_AdServer_Renderer {
 			}
 
 			// Check Geo
-			$geo_enabled = self::get_cached_field( 'wp_ad_geo_enabled', $ad_id );
+			$geo_enabled = self::get_cached_field( 'itea_ad_geo_enabled', $ad_id );
 			if ( $geo_enabled ) {
-				$mode      = self::get_cached_field( 'wp_ad_geo_mode', $ad_id );
-				$countries = self::get_cached_field( 'wp_ad_geo_countries', $ad_id );
+				$mode      = self::get_cached_field( 'itea_ad_geo_mode', $ad_id );
+				$countries = self::get_cached_field( 'itea_ad_geo_countries', $ad_id );
 				$country_list = is_array( $countries ) ? array_map( 'strtoupper', $countries ) : array_map( 'trim', explode( ',', strtoupper( $countries ) ) );
 
 				if ( $mode === 'include' ) {
@@ -289,9 +293,9 @@ class WP_AdServer_Renderer {
 			}
 
 			// Check Device
-			$device_enabled = self::get_cached_field( 'wp_ad_device_enabled', $ad_id );
+			$device_enabled = self::get_cached_field( 'itea_ad_device_enabled', $ad_id );
 			if ( $device_enabled ) {
-				$target_devices = self::get_cached_field( 'wp_ad_device_types', $ad_id );
+				$target_devices = self::get_cached_field( 'itea_ad_device_types', $ad_id );
 				$target_devices = is_array( $target_devices ) ? $target_devices : array();
 
 				if ( ! in_array( $visitor_device, $target_devices ) ) {
@@ -301,22 +305,22 @@ class WP_AdServer_Renderer {
 			}
 
 			// Check content
-			$type = self::get_cached_field( 'wp_ad_type', $ad_id );
+			$type = self::get_cached_field( 'itea_ad_type', $ad_id );
 			if ( $type === 'image' ) {
-				$image_url = self::get_cached_field( 'wp_ad_image', $ad_id );
+				$image_url = self::get_cached_field( 'itea_ad_image', $ad_id );
 				if ( ! $image_url ) {
 					$reasons[] = "Ad '{$ad_title}' (ID: {$ad_id}) has no image set.";
 					continue;
 				}
 			} else {
-				$html_code = self::get_cached_field( 'wp_ad_html_code', $ad_id );
+				$html_code = self::get_cached_field( 'itea_ad_html_code', $ad_id );
 				if ( empty( $html_code ) ) {
 					$reasons[] = "Ad '{$ad_title}' (ID: {$ad_id}) has no HTML code set.";
 					continue;
 				}
 			}
 
-			$weight = (int) self::get_cached_field( 'wp_ad_weight', $ad_id ) ?: 1;
+			$weight = (int) self::get_cached_field( 'itea_ad_weight', $ad_id ) ?: 1;
 			for ( $i = 0; $i < $weight; $i++ ) {
 				$eligible_ads[] = $ad_id;
 			}
@@ -332,23 +336,23 @@ class WP_AdServer_Renderer {
 		}
 
 		$selected_ad_id = $eligible_ads[ array_rand( $eligible_ads ) ];
-		WP_AdServer_Tracking::track_event( $selected_ad_id, 'impression' );
+		ITEA_AdServer_Tracking::track_event( $selected_ad_id, 'impression' );
 
-		$type = self::get_cached_field( 'wp_ad_type', $selected_ad_id );
+		$type = self::get_cached_field( 'itea_ad_type', $selected_ad_id );
 		$output = '';
 
 		if ( $type === 'image' ) {
-			$image_url = self::get_cached_field( 'wp_ad_image', $selected_ad_id );
-			$click_url = add_query_arg( 'wp_ad_click', $selected_ad_id, home_url( '/' ) );
+			$image_url = self::get_cached_field( 'itea_ad_image', $selected_ad_id );
+			$click_url = add_query_arg( 'itea_ad_click', $selected_ad_id, home_url( '/' ) );
 
 			$output = sprintf(
-				'<div class="wp-adserver-ad"><a href="%s" target="_blank"><img src="%s" style="max-width:100%%; height:auto;"></a></div>',
+				'<div class="itea-adserver-ad"><a href="%s" target="_blank"><img src="%s" style="max-width:100%%; height:auto;"></a></div>',
 				esc_url( $click_url ),
 				esc_url( $image_url )
 			);
 		} else {
-			$html_code = self::get_cached_field( 'wp_ad_html_code', $selected_ad_id );
-			$output = '<div class="wp-adserver-ad">' . $html_code . '</div>';
+			$html_code = self::get_cached_field( 'itea_ad_html_code', $selected_ad_id );
+			$output = '<div class="itea-adserver-ad">' . $html_code . '</div>';
 		}
 
 		return $output;

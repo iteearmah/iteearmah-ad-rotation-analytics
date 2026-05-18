@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class WP_AdServer_Access {
+class ITEA_AdServer_Access {
 
 	public static function init() {
 		add_action( 'admin_init', array( __CLASS__, 'register_settings' ) );
@@ -15,7 +15,7 @@ class WP_AdServer_Access {
 	}
 
 	public static function enqueue_admin_assets( $hook ) {
-		if ( strpos( $hook, 'wp-adserver-access' ) === false ) {
+		if ( strpos( $hook, 'itea-adserver-access' ) === false ) {
 			return;
 		}
 
@@ -23,8 +23,8 @@ class WP_AdServer_Access {
 			acf_enqueue_scripts();
 		}
 
-		wp_enqueue_style( 'wp-adserver-admin-css', plugins_url( '../assets/css/admin.css', __FILE__ ), array(), '1.1.0' );
-		wp_enqueue_script( 'wp-adserver-admin-js', plugins_url( '../assets/js/admin.js', __FILE__ ), array( 'jquery' ), '1.1.0', true );
+		wp_enqueue_style( 'itea-adserver-admin-css', plugins_url( '../assets/css/admin.css', __FILE__ ), array(), '1.1.0' );
+		wp_enqueue_script( 'itea-adserver-admin-js', plugins_url( '../assets/js/admin.js', __FILE__ ), array( 'jquery' ), '1.1.0', true );
 	}
 
 	public static function check_user_whitelist( $allcaps, $caps, $args ) {
@@ -56,11 +56,11 @@ class WP_AdServer_Access {
 			return $allcaps;
 		}
 
-		$allowed_user_ids = function_exists( 'get_field' ) ? get_field( 'wp_adserver_allowed_users_list', 'option' ) : array();
+		$allowed_user_ids = function_exists( 'get_field' ) ? get_field( 'itea_adserver_allowed_users_list', 'option' ) : array();
 
 		// Fallback to old username-based whitelist if the new one is empty
 		if ( empty( $allowed_user_ids ) ) {
-			$allowed_users_raw = get_option( 'wp_adserver_allowed_users', '' );
+			$allowed_users_raw = get_option( 'itea_adserver_allowed_users', '' );
 			if ( empty( $allowed_users_raw ) ) {
 				return $allcaps;
 			}
@@ -112,12 +112,12 @@ class WP_AdServer_Access {
 	}
 
 	public static function register_settings() {
-		register_setting( 'wp_adserver_access_group', 'wp_adserver_role_caps', array(
+		register_setting( 'itea_adserver_access_group', 'itea_adserver_role_caps', array(
 			'type'              => 'array',
 			'sanitize_callback' => array( __CLASS__, 'sanitize_role_caps' ),
 			'default'           => array(),
 		) );
-		register_setting( 'wp_adserver_access_group', 'wp_adserver_allowed_users', array(
+		register_setting( 'itea_adserver_access_group', 'itea_adserver_allowed_users', array(
 			'type'              => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
 			'default'           => '',
@@ -128,8 +128,8 @@ class WP_AdServer_Access {
 			acf_add_options_sub_page( array(
 				'page_title'  => 'Access Configuration',
 				'menu_title'  => 'Access Settings',
-				'parent_slug' => 'edit.php?post_type=wp_ad',
-				'menu_slug'   => 'wp-adserver-access',
+				'parent_slug' => 'edit.php?post_type=itea_ad',
+				'menu_slug'   => 'itea-adserver-access',
 				'capability'  => 'manage_options',
 				'redirect'    => false,
 			) );
@@ -140,11 +140,11 @@ class WP_AdServer_Access {
 		// If ACF is not active, we still need the submenu page
 		if ( ! function_exists( 'acf_add_options_page' ) ) {
 			add_submenu_page(
-				'edit.php?post_type=wp_ad',
+				'edit.php?post_type=itea_ad',
 				'Access Configuration',
 				'Access Settings',
 				'manage_options',
-				'wp-adserver-access',
+				'itea-adserver-access',
 				array( __CLASS__, 'render_settings_page' )
 			);
 		}
@@ -163,14 +163,14 @@ class WP_AdServer_Access {
 			return;
 		}
 
-		if ( isset( $_POST['wp_adserver_save_access'] ) && check_admin_referer( 'wp_adserver_access_nonce' ) ) {
+		if ( isset( $_POST['itea_adserver_save_access'] ) && check_admin_referer( 'itea_adserver_access_nonce' ) ) {
 			self::save_role_caps();
 			self::save_allowed_users();
 
 			// Save SCF fields if available
 			if ( function_exists( 'acf_maybe_get_field' ) ) {
 				// We need to manually update the field since we are not using acf_form()
-				$field_key = 'field_wp_adserver_allowed_users_list';
+				$field_key = 'field_itea_adserver_allowed_users_list';
 				if ( isset( $_POST['acf'][ $field_key ] ) ) {
 					$acf_value = array_map( 'absint', (array) wp_unslash( $_POST['acf'][ $field_key ] ) );
 					update_field( $field_key, $acf_value, 'option' );
@@ -182,22 +182,22 @@ class WP_AdServer_Access {
 
 		$roles = wp_roles()->roles;
 		$caps  = self::get_capabilities();
-		$allowed_users = get_option( 'wp_adserver_allowed_users', '' );
+		$allowed_users = get_option( 'itea_adserver_allowed_users', '' );
 
 		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'user_access';
 		?>
-		<div class="wrap wp-adserver-settings">
+		<div class="wrap itea-adserver-settings">
 			<h1 class="wp-heading-inline">Iteearmah Ad Rotation and Analytics Access Configuration</h1>
 			<hr class="wp-header-end">
 
-			<nav class="nav-tab-wrapper wp-adserver-tabs">
-				<a href="?post_type=wp_ad&page=wp-adserver-access&tab=user_access" class="nav-tab <?php echo $active_tab === 'user_access' ? 'nav-tab-active' : ''; ?>">User Access</a>
-				<a href="?post_type=wp_ad&page=wp-adserver-access&tab=role_permissions" class="nav-tab <?php echo $active_tab === 'role_permissions' ? 'nav-tab-active' : ''; ?>">Role Permissions</a>
+			<nav class="nav-tab-wrapper itea-adserver-tabs">
+				<a href="?post_type=itea_ad&page=itea-adserver-access&tab=user_access" class="nav-tab <?php echo $active_tab === 'user_access' ? 'nav-tab-active' : ''; ?>">User Access</a>
+				<a href="?post_type=itea_ad&page=itea-adserver-access&tab=role_permissions" class="nav-tab <?php echo $active_tab === 'role_permissions' ? 'nav-tab-active' : ''; ?>">Role Permissions</a>
 			</nav>
 
-			<div class="wp-adserver-tab-content">
+			<div class="itea-adserver-tab-content">
 				<form method="post">
-					<?php wp_nonce_field( 'wp_adserver_access_nonce' ); ?>
+					<?php wp_nonce_field( 'itea_adserver_access_nonce' ); ?>
 
 					<?php if ( $active_tab === 'user_access' ) : ?>
 						<div class="card">
@@ -209,22 +209,22 @@ class WP_AdServer_Access {
 										<th scope="row">Allowed Users</th>
 										<td>
 											<?php
-											$field = acf_get_field( 'field_wp_adserver_allowed_users_list' );
+											$field = acf_get_field( 'field_itea_adserver_allowed_users_list' );
 											if ( $field ) {
-												$field['name']  = 'acf[field_wp_adserver_allowed_users_list]';
-												$field['value'] = get_field( 'wp_adserver_allowed_users_list', 'option' );
+												$field['name']  = 'acf[field_itea_adserver_allowed_users_list]';
+												$field['value'] = get_field( 'itea_adserver_allowed_users_list', 'option' );
 												acf_render_field_wrap( $field );
 											} else {
 												// Fallback if field not found for some reason
 												acf_render_field_wrap( array(
-													'key'           => 'field_wp_adserver_allowed_users_list',
+													'key'           => 'field_itea_adserver_allowed_users_list',
 													'label'         => 'Allowed Users',
-													'name'          => 'acf[field_wp_adserver_allowed_users_list]',
+													'name'          => 'acf[field_itea_adserver_allowed_users_list]',
 													'type'          => 'user',
 													'return_format' => 'id',
 													'multiple'      => 1,
 													'allow_null'    => 1,
-													'value'         => get_field( 'wp_adserver_allowed_users_list', 'option' ),
+													'value'         => get_field( 'itea_adserver_allowed_users_list', 'option' ),
 												) );
 											}
 											?>
@@ -232,9 +232,9 @@ class WP_AdServer_Access {
 									</tr>
 								<?php else : ?>
 									<tr>
-										<th scope="row"><label for="wp_adserver_allowed_users">Allowed Usernames (Legacy)</label></th>
+										<th scope="row"><label for="itea_adserver_allowed_users">Allowed Usernames (Legacy)</label></th>
 										<td>
-											<textarea name="wp_adserver_allowed_users" id="wp_adserver_allowed_users" rows="5" class="large-text" placeholder="user1, user2, user3"><?php echo esc_textarea( get_option( 'wp_adserver_allowed_users', '' ) ); ?></textarea>
+											<textarea name="itea_adserver_allowed_users" id="itea_adserver_allowed_users" rows="5" class="large-text" placeholder="user1, user2, user3"><?php echo esc_textarea( get_option( 'itea_adserver_allowed_users', '' ) ); ?></textarea>
 											<p class="description">Enter usernames separated by commas. <strong>Note:</strong> Secure Custom Fields plugin is recommended for a better user selection experience.</p>
 										</td>
 									</tr>
@@ -280,7 +280,7 @@ class WP_AdServer_Access {
 					<?php endif; ?>
 
 					<p class="submit">
-						<input type="submit" name="wp_adserver_save_access" class="button button-primary button-hero" value="Save Changes">
+						<input type="submit" name="itea_adserver_save_access" class="button button-primary button-hero" value="Save Changes">
 					</p>
 				</form>
 			</div>
@@ -343,8 +343,8 @@ class WP_AdServer_Access {
 			return;
 		}
 
-		$allowed_users = isset( $_POST['wp_adserver_allowed_users'] ) ? sanitize_text_field( wp_unslash( $_POST['wp_adserver_allowed_users'] ) ) : '';
-		update_option( 'wp_adserver_allowed_users', $allowed_users );
+		$allowed_users = isset( $_POST['itea_adserver_allowed_users'] ) ? sanitize_text_field( wp_unslash( $_POST['itea_adserver_allowed_users'] ) ) : '';
+		update_option( 'itea_adserver_allowed_users', $allowed_users );
 	}
 
 	public static function add_admin_caps() {

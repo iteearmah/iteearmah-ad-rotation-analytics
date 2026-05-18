@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class WP_AdServer_Reports {
+class ITEA_AdServer_Reports {
 
 	public static function init() {
 		add_action( 'admin_menu', array( __CLASS__, 'add_reports_menu' ), 15 );
@@ -14,44 +14,46 @@ class WP_AdServer_Reports {
 
 	public static function add_reports_menu() {
 		add_submenu_page(
-			'edit.php?post_type=wp_ad',
+			'edit.php?post_type=itea_ad',
 			esc_html__( 'Reports', 'iteearmah-ad-rotation-analytics' ),
 			esc_html__( 'Reports', 'iteearmah-ad-rotation-analytics' ),
 			'manage_options',
-			'wp-adserver-reports',
+			'itea-adserver-reports',
 			array( __CLASS__, 'render_reports_page' )
 		);
 	}
 
 	public static function enqueue_report_assets( $hook ) {
-		if ( strpos( $hook, 'wp-adserver-reports' ) === false ) {
+		if ( strpos( $hook, 'itea-adserver-reports' ) === false ) {
 			return;
 		}
 
-		// Load Chart.js from CDN for better visualization
-		wp_enqueue_script( 'chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.9.1', true );
-		
-		wp_enqueue_style( 'wp-adserver-admin', plugins_url( '../assets/css/admin.css', __FILE__ ), array(), '1.1.0' );
+		$version = defined( 'ITEA_ADSERVER_VERSION' ) ? ITEA_ADSERVER_VERSION : '1.8.0';
+
+		// Load local Chart.js
+		wp_enqueue_script( 'chart-js', plugins_url( '../assets/js/chart.min.js', __FILE__ ), array(), '3.9.1', true );
+
+		wp_enqueue_style( 'itea-adserver-admin', plugins_url( '../assets/css/admin.css', __FILE__ ), array(), $version );
 	}
 
 	public static function handle_export() {
-		if ( ! isset( $_GET['wp_ad_export'] ) || ! current_user_can( 'manage_options' ) ) {
+		if ( ! isset( $_GET['itea_ad_export'] ) || ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
-		check_admin_referer( 'wp_ad_export_report' );
+		check_admin_referer( 'itea_ad_export_report' );
 
 		$days = isset( $_GET['days'] ) ? intval( $_GET['days'] ) : 30;
 		$ad_id = isset( $_GET['ad_id'] ) ? intval( $_GET['ad_id'] ) : 0;
 
-		$stats = WP_AdServer_Tracking::get_aggregated_stats( array(
+		$stats = ITEA_AdServer_Tracking::get_aggregated_stats( array(
 			'days'  => $days,
 			'ad_id' => $ad_id,
 			'groupby' => 'date'
 		) );
 
 		header( 'Content-Type: text/csv; charset=utf-8' );
-  header( 'Content-Disposition: attachment; filename=wp-adserver-report-' . gmdate( 'Y-m-d' ) . '.csv' );
+  header( 'Content-Disposition: attachment; filename=itea-adserver-report-' . gmdate( 'Y-m-d' ) . '.csv' );
 
 		$output = fopen( 'php://output', 'w' );
 		fputcsv( $output, array( __( 'Date', 'iteearmah-ad-rotation-analytics' ), __( 'Impressions', 'iteearmah-ad-rotation-analytics' ), __( 'Clicks', 'iteearmah-ad-rotation-analytics' ), __( 'CTR (%)', 'iteearmah-ad-rotation-analytics' ) ) );
@@ -74,19 +76,19 @@ class WP_AdServer_Reports {
 		$days = isset( $_GET['days'] ) ? intval( $_GET['days'] ) : 30;
 		$ad_id = isset( $_GET['ad_id'] ) ? intval( $_GET['ad_id'] ) : 0;
 
-		$stats = WP_AdServer_Tracking::get_aggregated_stats( array(
+		$stats = ITEA_AdServer_Tracking::get_aggregated_stats( array(
 			'days'  => $days,
 			'ad_id' => $ad_id,
 			'groupby' => 'date'
 		) );
 
-		$device_stats = WP_AdServer_Tracking::get_aggregated_stats( array(
+		$device_stats = ITEA_AdServer_Tracking::get_aggregated_stats( array(
 			'days'  => $days,
 			'ad_id' => $ad_id,
 			'groupby' => 'device'
 		) );
 
-		$country_stats = WP_AdServer_Tracking::get_aggregated_stats( array(
+		$country_stats = ITEA_AdServer_Tracking::get_aggregated_stats( array(
 			'days'  => $days,
 			'ad_id' => $ad_id,
 			'groupby' => 'country'
@@ -109,14 +111,14 @@ class WP_AdServer_Reports {
 		$avg_ctr = $total_impressions > 0 ? ( $total_clicks / $total_impressions ) * 100 : 0;
 
 		?>
-		<div class="wrap wp-adserver-reports">
+		<div class="wrap itea-adserver-reports">
 			<h1><?php esc_html_e( 'Iteearmah Ad Rotation and Analytics Reports', 'iteearmah-ad-rotation-analytics' ); ?></h1>
 
 			<div class="report-filters card">
 				<form method="get" action="">
-					<input type="hidden" name="post_type" value="wp_ad">
-					<input type="hidden" name="page" value="wp-adserver-reports">
-					
+					<input type="hidden" name="post_type" value="itea_ad">
+					<input type="hidden" name="page" value="itea-adserver-reports">
+
 					<div class="filter-group">
 						<label for="days"><?php esc_html_e( 'Period:', 'iteearmah-ad-rotation-analytics' ); ?></label>
 						<select name="days" id="days">
@@ -131,7 +133,7 @@ class WP_AdServer_Reports {
 						<select name="ad_id" id="ad_id">
 							<option value="0"><?php esc_html_e( 'All Ads', 'iteearmah-ad-rotation-analytics' ); ?></option>
 							<?php
-							$ads = get_posts( array( 'post_type' => 'wp_ad', 'posts_per_page' => -1 ) );
+							$ads = get_posts( array( 'post_type' => 'itea_ad', 'posts_per_page' => 100 ) );
 							foreach ( $ads as $ad ) {
 								echo '<option value="' . esc_attr( $ad->ID ) . '" ' . selected( $ad_id, $ad->ID, false ) . '>' . esc_html( $ad->post_title ) . '</option>';
 							}
@@ -143,7 +145,7 @@ class WP_AdServer_Reports {
 				</form>
 
 				<div class="report-actions">
-					<a href="<?php echo esc_url( add_query_arg( array( 'wp_ad_export' => 1, '_wpnonce' => wp_create_nonce( 'wp_ad_export_report' ) ) ) ); ?>" class="button button-primary">
+					<a href="<?php echo esc_url( add_query_arg( array( 'itea_ad_export' => 1, '_wpnonce' => wp_create_nonce( 'itea_ad_export_report' ) ) ) ); ?>" class="button button-primary">
 						<span class="dashicons dashicons-download" style="vertical-align: middle; margin-top: -3px; font-size: 18px;"></span>
 						<?php esc_html_e( 'Export to CSV', 'iteearmah-ad-rotation-analytics' ); ?>
 					</a>

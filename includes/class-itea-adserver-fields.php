@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class WP_AdServer_Fields {
+class ITEA_AdServer_Fields {
 
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'register_fields' ) );
@@ -16,13 +16,13 @@ class WP_AdServer_Fields {
 		}
 
 		acf_add_local_field_group( array(
-			'key'      => 'group_wp_ad_details',
+			'key'      => 'group_itea_ad_details',
 			'title'    => 'Ad Details',
 			'fields'   => array(
 				array(
-					'key'           => 'field_wp_ad_active',
+					'key'           => 'field_itea_ad_active',
 					'label'         => 'Active',
-					'name'          => 'wp_ad_active',
+					'name'          => 'itea_ad_active',
 					'type'          => 'true_false',
 					'default_value' => 1,
 					'ui'            => 1,
@@ -30,9 +30,9 @@ class WP_AdServer_Fields {
 					'ui_off_text'   => 'Inactive',
 				),
 				array(
-					'key'           => 'field_wp_ad_type',
+					'key'           => 'field_itea_ad_type',
 					'label'         => 'Ad Type',
-					'name'          => 'wp_ad_type',
+					'name'          => 'itea_ad_type',
 					'type'          => 'select',
 					'choices'       => array(
 						'image' => 'Image',
@@ -41,9 +41,9 @@ class WP_AdServer_Fields {
 					'default_value' => 'image',
 				),
 				array(
-					'key'               => 'field_wp_ad_image',
+					'key'               => 'field_itea_ad_image',
 					'label'             => 'Image',
-					'name'              => 'wp_ad_image',
+					'name'              => 'itea_ad_image',
 					'type'              => 'image',
 					'return_format'     => 'url',
 					'preview_size'      => 'medium',
@@ -51,7 +51,7 @@ class WP_AdServer_Fields {
 					'conditional_logic' => array(
 						array(
 							array(
-								'field'    => 'field_wp_ad_type',
+								'field'    => 'field_itea_ad_type',
 								'operator' => '==',
 								'value'    => 'image',
 							),
@@ -59,14 +59,14 @@ class WP_AdServer_Fields {
 					),
 				),
 				array(
-					'key'               => 'field_wp_ad_destination_url',
+					'key'               => 'field_itea_ad_destination_url',
 					'label'             => 'Destination URL',
-					'name'              => 'wp_ad_destination_url',
+					'name'              => 'itea_ad_destination_url',
 					'type'              => 'url',
 					'conditional_logic' => array(
 						array(
 							array(
-								'field'    => 'field_wp_ad_type',
+								'field'    => 'field_itea_ad_type',
 								'operator' => '==',
 								'value'    => 'image',
 							),
@@ -74,14 +74,14 @@ class WP_AdServer_Fields {
 					),
 				),
 				array(
-					'key'               => 'field_wp_ad_html_code',
+					'key'               => 'field_itea_ad_html_code',
 					'label'             => 'HTML Code',
-					'name'              => 'wp_ad_html_code',
+					'name'              => 'itea_ad_html_code',
 					'type'              => 'textarea',
 					'conditional_logic' => array(
 						array(
 							array(
-								'field'    => 'field_wp_ad_type',
+								'field'    => 'field_itea_ad_type',
 								'operator' => '==',
 								'value'    => 'html',
 							),
@@ -89,66 +89,66 @@ class WP_AdServer_Fields {
 					),
 				),
 				array(
-					'key'           => 'field_wp_ad_weight',
+					'key'           => 'field_itea_ad_weight',
 					'label'         => 'Weight (1-10)',
-					'name'          => 'wp_ad_weight',
+					'name'          => 'itea_ad_weight',
 					'type'          => 'number',
 					'default_value' => 1,
 					'min'           => 1,
 					'max'           => 10,
 				),
 				array(
-					'key'   => 'field_wp_ad_scheduling_heading',
+					'key'   => 'field_itea_ad_scheduling_heading',
 					'label' => 'Scheduling & Limits',
 					'type'  => 'accordion',
 				),
 				array(
-					'key'   => 'field_wp_ad_start_date',
+					'key'   => 'field_itea_ad_start_date',
 					'label' => 'Start Date',
-					'name'  => 'wp_ad_start_date',
+					'name'  => 'itea_ad_start_date',
 					'type'  => 'date_time_picker',
 					'display_format' => 'Y-m-d H:i:s',
 					'return_format'  => 'Y-m-d H:i:s',
 				),
 				array(
-					'key'   => 'field_wp_ad_end_date',
+					'key'   => 'field_itea_ad_end_date',
 					'label' => 'End Date',
-					'name'  => 'wp_ad_end_date',
+					'name'  => 'itea_ad_end_date',
 					'type'  => 'date_time_picker',
 					'display_format' => 'Y-m-d H:i:s',
 					'return_format'  => 'Y-m-d H:i:s',
 				),
 				array(
-					'key'   => 'field_wp_ad_limit_impressions',
+					'key'   => 'field_itea_ad_limit_impressions',
 					'label' => 'Impression Limit',
-					'name'  => 'wp_ad_limit_impressions',
+					'name'  => 'itea_ad_limit_impressions',
 					'type'  => 'number',
 					'instructions' => 'Set to 0 or leave empty for no limit.',
 				),
 				array(
-					'key'   => 'field_wp_ad_limit_clicks',
+					'key'   => 'field_itea_ad_limit_clicks',
 					'label' => 'Click Limit',
-					'name'  => 'wp_ad_limit_clicks',
+					'name'  => 'itea_ad_limit_clicks',
 					'type'  => 'number',
 					'instructions' => 'Set to 0 or leave empty for no limit.',
 				),
 				array(
-					'key'   => 'field_wp_ad_geo_heading',
+					'key'   => 'field_itea_ad_geo_heading',
 					'label' => 'Geo-Targeting',
 					'type'  => 'accordion',
 				),
 				array(
-					'key'           => 'field_wp_ad_geo_enabled',
+					'key'           => 'field_itea_ad_geo_enabled',
 					'label'         => 'Enable Geo-Targeting',
-					'name'          => 'wp_ad_geo_enabled',
+					'name'          => 'itea_ad_geo_enabled',
 					'type'          => 'true_false',
 					'ui'            => 1,
 					'default_value' => 0,
 				),
 				array(
-					'key'               => 'field_wp_ad_geo_mode',
+					'key'               => 'field_itea_ad_geo_mode',
 					'label'             => 'Geo Mode',
-					'name'              => 'wp_ad_geo_mode',
+					'name'              => 'itea_ad_geo_mode',
 					'type'              => 'select',
 					'choices'           => array(
 						'include' => 'Include selected countries',
@@ -158,7 +158,7 @@ class WP_AdServer_Fields {
 					'conditional_logic' => array(
 						array(
 							array(
-								'field'    => 'field_wp_ad_geo_enabled',
+								'field'    => 'field_itea_ad_geo_enabled',
 								'operator' => '==',
 								'value'    => '1',
 							),
@@ -166,9 +166,9 @@ class WP_AdServer_Fields {
 					),
 				),
 				array(
-					'key'               => 'field_wp_ad_geo_countries',
+					'key'               => 'field_itea_ad_geo_countries',
 					'label'             => 'Target Countries',
-					'name'              => 'wp_ad_geo_countries',
+					'name'              => 'itea_ad_geo_countries',
 					'type'              => 'select',
 					'choices'           => self::get_country_choices(),
 					'multiple'          => 1,
@@ -178,7 +178,7 @@ class WP_AdServer_Fields {
 					'conditional_logic' => array(
 						array(
 							array(
-								'field'    => 'field_wp_ad_geo_enabled',
+								'field'    => 'field_itea_ad_geo_enabled',
 								'operator' => '==',
 								'value'    => '1',
 							),
@@ -186,22 +186,22 @@ class WP_AdServer_Fields {
 					),
 				),
 				array(
-					'key'   => 'field_wp_ad_device_heading',
+					'key'   => 'field_itea_ad_device_heading',
 					'label' => 'Device Targeting',
 					'type'  => 'accordion',
 				),
 				array(
-					'key'           => 'field_wp_ad_device_enabled',
+					'key'           => 'field_itea_ad_device_enabled',
 					'label'         => 'Enable Device Targeting',
-					'name'          => 'wp_ad_device_enabled',
+					'name'          => 'itea_ad_device_enabled',
 					'type'          => 'true_false',
 					'ui'            => 1,
 					'default_value' => 0,
 				),
 				array(
-					'key'               => 'field_wp_ad_device_types',
+					'key'               => 'field_itea_ad_device_types',
 					'label'             => 'Target Devices',
-					'name'              => 'wp_ad_device_types',
+					'name'              => 'itea_ad_device_types',
 					'type'              => 'checkbox',
 					'choices'           => array(
 						'mobile'  => 'Mobile',
@@ -212,7 +212,7 @@ class WP_AdServer_Fields {
 					'conditional_logic' => array(
 						array(
 							array(
-								'field'    => 'field_wp_ad_device_enabled',
+								'field'    => 'field_itea_ad_device_enabled',
 								'operator' => '==',
 								'value'    => '1',
 							),
@@ -225,28 +225,28 @@ class WP_AdServer_Fields {
 					array(
 						'param'    => 'post_type',
 						'operator' => '==',
-						'value'    => 'wp_ad',
+						'value'    => 'itea_ad',
 					),
 				),
 			),
 		) );
 
 		acf_add_local_field_group( array(
-			'key'      => 'group_wp_ad_zone_details',
+			'key'      => 'group_itea_ad_zone_details',
 			'title'    => 'Zone Details',
 			'fields'   => array(
 				array(
-					'key'   => 'field_wp_ad_zone_dimensions',
+					'key'   => 'field_itea_ad_zone_dimensions',
 					'label' => 'Zone Dimensions',
-					'name'  => 'wp_ad_zone_dimensions',
+					'name'  => 'itea_ad_zone_dimensions',
 					'type'  => 'text',
 					'instructions' => 'e.g., 728x90, 300x250. This is for reference and can be used in your theme.',
 					'placeholder'  => 'Width x Height',
 				),
 				array(
-					'key'   => 'field_wp_ad_zone_description',
+					'key'   => 'field_itea_ad_zone_description',
 					'label' => 'Zone Description',
-					'name'  => 'wp_ad_zone_description',
+					'name'  => 'itea_ad_zone_description',
 					'type'  => 'textarea',
 					'rows'  => 3,
 				),
@@ -263,13 +263,13 @@ class WP_AdServer_Fields {
 		) );
 
 		acf_add_local_field_group( array(
-			'key'      => 'group_wp_ad_access_settings',
+			'key'      => 'group_itea_ad_access_settings',
 			'title'    => 'Access Settings',
 			'fields'   => array(
 				array(
-					'key'           => 'field_wp_adserver_allowed_users_list',
+					'key'           => 'field_itea_adserver_allowed_users_list',
 					'label'         => 'Allowed Users',
-					'name'          => 'wp_adserver_allowed_users_list',
+					'name'          => 'itea_adserver_allowed_users_list',
 					'type'          => 'user',
 					'instructions'  => 'Select specific users who are allowed to manage advertisements.',
 					'required'      => 0,
@@ -284,7 +284,7 @@ class WP_AdServer_Fields {
 					array(
 						'param'    => 'options_page',
 						'operator' => '==',
-						'value'    => 'wp-adserver-access',
+						'value'    => 'itea-adserver-access',
 					),
 				),
 			),

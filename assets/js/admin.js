@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
     // Add some interactivity if needed
-    $('.wp-adserver-settings .cap-check').on('click', function(e) {
+    $('.itea-adserver-settings .cap-check').on('click', function(e) {
         if (e.target.tagName !== 'INPUT') {
             $(this).find('input[type="checkbox"]').trigger('click');
         }
@@ -18,7 +18,7 @@ jQuery(document).ready(function($) {
             url: ajaxurl,
             type: 'POST',
             data: {
-                action: 'wp_adserver_toggle_status',
+                action: 'itea_adserver_toggle_status',
                 post_id: postId,
                 nonce: nonce
             },
