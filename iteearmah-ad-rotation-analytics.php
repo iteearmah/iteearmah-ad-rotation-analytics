@@ -1,14 +1,14 @@
 <?php
 
 /*
-Plugin Name: AdServer
+Plugin Name: Iteearmah Ad Rotation and Analytics
 Plugin URI: https://github.com/iteearmah/wp-adserver
 Description: A specialized plugin to manage, rotate, track, and serve advertisements.
-Version: 1.7.0
+Version: 1.7.1
 Author: Samuel Attoh Armah
 Author URI: https://github.com/iteearmah
 License: GPL2
-Text Domain: adserver
+Text Domain: iteearmah-ad-rotation-analytics
 Domain Path: /languages
 */
 
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WP_ADSERVER_VERSION', '1.7.0' );
+define( 'WP_ADSERVER_VERSION', '1.7.1' );
 
 // Load the modular system
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-wp-adserver-loader.php';
@@ -46,9 +46,9 @@ function wp_adserver_scf_missing_notice() {
 	}
 	?>
 	<div class="notice notice-error is-dismissible">
-		<p><?php echo wp_kses_post( __( '<strong>AdServer</strong> requires the <strong>Secure Custom Fields</strong> (formerly ACF) plugin to be installed and active for full functionality.', 'adserver' ) ); ?></p>
+		<p><?php echo wp_kses_post( __( '<strong>Iteearmah Ad Rotation and Analytics</strong> requires the <strong>Secure Custom Fields</strong> (formerly ACF) plugin to be installed and active for full functionality.', 'iteearmah-ad-rotation-analytics' ) ); ?></p>
 		<p>
-			<a href="<?php echo esc_url( admin_url( 'plugin-install.php?tab=search&s=secure+custom+fields' ) ); ?>" class="button button-primary"><?php esc_html_e( 'Install Secure Custom Fields', 'adserver' ); ?></a>
+			<a href="<?php echo esc_url( admin_url( 'plugin-install.php?tab=search&s=secure+custom+fields' ) ); ?>" class="button button-primary"><?php esc_html_e( 'Install Secure Custom Fields', 'iteearmah-ad-rotation-analytics' ); ?></a>
 		</p>
 	</div>
 	<?php

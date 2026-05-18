@@ -68,9 +68,9 @@ class WP_AdServer_Renderer {
 	}
 
 	public static function enqueue_scripts() {
-  wp_register_style( 'adserver', plugins_url( '../assets/css/style.css', __FILE__ ), array(), WP_ADSERVER_VERSION );
+  wp_register_style( 'iteearmah-ad-rotation-analytics', plugins_url( '../assets/css/style.css', __FILE__ ), array(), WP_ADSERVER_VERSION );
 		wp_register_script( 'wp-adserver-js', plugins_url( '../assets/js/wp-adserver.js', __FILE__ ), array(), WP_ADSERVER_VERSION, true );
-		wp_localize_script( 'wp-adserver-js', 'wpAdServer', array(
+		wp_localize_script( 'wp-adserver-js', 'wpIteearmah Ad Rotation and Analytics', array(
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 		) );
 	}
@@ -81,7 +81,7 @@ class WP_AdServer_Renderer {
 		), $atts );
 
 		// Only enqueue frontend assets if the shortcode is used
-		wp_enqueue_style( 'adserver' );
+		wp_enqueue_style( 'iteearmah-ad-rotation-analytics' );
 		wp_enqueue_script( 'wp-adserver-js' );
 
 		$zone_slug = ! empty( $atts['zone'] ) ? strtolower( sanitize_title( $atts['zone'] ) ) : 'default';
@@ -101,7 +101,7 @@ class WP_AdServer_Renderer {
 
 		if ( ! $html && current_user_can( 'manage_options' ) ) {
 			$html = '<div style="border:1px dashed #ccc; padding:10px; color:#666; font-size:12px;">';
-			$html .= 'AdServer: No eligible ads found for zone "' . esc_html( $zone ) . '".';
+			$html .= 'Iteearmah Ad Rotation and Analytics: No eligible ads found for zone "' . esc_html( $zone ) . '".';
 			if ( $debug_info ) {
 				$html .= '<br>Reason: ' . esc_html( $debug_info );
 			}

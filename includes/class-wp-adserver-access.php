@@ -152,14 +152,14 @@ class WP_AdServer_Access {
 
 	public static function render_settings_page() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'adserver' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'iteearmah-ad-rotation-analytics' ) );
 		}
 
 		// Ensure SCF is fully ready if available
 		if ( function_exists( 'acf_render_field_wrap' ) ) {
 			acf_enqueue_scripts();
 		} else {
-			echo '<div class="notice notice-error"><p>' . esc_html__( 'The Secure Custom Fields plugin must be active to manage access settings.', 'adserver' ) . '</p></div>';
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'The Secure Custom Fields plugin must be active to manage access settings.', 'iteearmah-ad-rotation-analytics' ) . '</p></div>';
 			return;
 		}
 
@@ -187,7 +187,7 @@ class WP_AdServer_Access {
 		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'user_access';
 		?>
 		<div class="wrap wp-adserver-settings">
-			<h1 class="wp-heading-inline">AdServer Access Configuration</h1>
+			<h1 class="wp-heading-inline">Iteearmah Ad Rotation and Analytics Access Configuration</h1>
 			<hr class="wp-header-end">
 
 			<nav class="nav-tab-wrapper wp-adserver-tabs">
@@ -202,7 +202,7 @@ class WP_AdServer_Access {
 					<?php if ( $active_tab === 'user_access' ) : ?>
 						<div class="card">
 							<h2>User Access Whitelist</h2>
-							<p class="description">Restrict access to the AdServer management section to specific users. Administrators always have access.</p>
+							<p class="description">Restrict access to the Iteearmah Ad Rotation and Analytics management section to specific users. Administrators always have access.</p>
 							<table class="form-table">
 								<?php if ( function_exists( 'acf_render_field_wrap' ) ) : ?>
 									<tr>

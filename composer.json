@@ -1,6 +1,6 @@
 {
-    "name": "iteearmah/wp-adserver",
-    "description": "A specialized plugin to manage, rotate, track, and serve advertisements.",
+    "name": "iteearmah/iteearmah-ad-rotation-analytics",
+    "description": "Iteearmah Ad Rotation and Analytics: A specialized plugin to manage, rotate, track, and serve advertisements.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "authors": [

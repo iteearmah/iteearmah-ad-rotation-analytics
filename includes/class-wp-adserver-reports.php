@@ -15,8 +15,8 @@ class WP_AdServer_Reports {
 	public static function add_reports_menu() {
 		add_submenu_page(
 			'edit.php?post_type=wp_ad',
-			esc_html__( 'Reports', 'adserver' ),
-			esc_html__( 'Reports', 'adserver' ),
+			esc_html__( 'Reports', 'iteearmah-ad-rotation-analytics' ),
+			esc_html__( 'Reports', 'iteearmah-ad-rotation-analytics' ),
 			'manage_options',
 			'wp-adserver-reports',
 			array( __CLASS__, 'render_reports_page' )
@@ -54,7 +54,7 @@ class WP_AdServer_Reports {
   header( 'Content-Disposition: attachment; filename=wp-adserver-report-' . gmdate( 'Y-m-d' ) . '.csv' );
 
 		$output = fopen( 'php://output', 'w' );
-		fputcsv( $output, array( __( 'Date', 'adserver' ), __( 'Impressions', 'adserver' ), __( 'Clicks', 'adserver' ), __( 'CTR (%)', 'adserver' ) ) );
+		fputcsv( $output, array( __( 'Date', 'iteearmah-ad-rotation-analytics' ), __( 'Impressions', 'iteearmah-ad-rotation-analytics' ), __( 'Clicks', 'iteearmah-ad-rotation-analytics' ), __( 'CTR (%)', 'iteearmah-ad-rotation-analytics' ) ) );
 
 		foreach ( $stats as $row ) {
 			$ctr = $row->impressions > 0 ? ( $row->clicks / $row->impressions ) * 100 : 0;
@@ -110,7 +110,7 @@ class WP_AdServer_Reports {
 
 		?>
 		<div class="wrap wp-adserver-reports">
-			<h1><?php esc_html_e( 'AdServer Reports', 'adserver' ); ?></h1>
+			<h1><?php esc_html_e( 'Iteearmah Ad Rotation and Analytics Reports', 'iteearmah-ad-rotation-analytics' ); ?></h1>
 
 			<div class="report-filters card">
 				<form method="get" action="">
@@ -118,18 +118,18 @@ class WP_AdServer_Reports {
 					<input type="hidden" name="page" value="wp-adserver-reports">
 					
 					<div class="filter-group">
-						<label for="days"><?php esc_html_e( 'Period:', 'adserver' ); ?></label>
+						<label for="days"><?php esc_html_e( 'Period:', 'iteearmah-ad-rotation-analytics' ); ?></label>
 						<select name="days" id="days">
-							<option value="7" <?php selected( $days, 7 ); ?>><?php esc_html_e( 'Last 7 Days', 'adserver' ); ?></option>
-							<option value="30" <?php selected( $days, 30 ); ?>><?php esc_html_e( 'Last 30 Days', 'adserver' ); ?></option>
-							<option value="90" <?php selected( $days, 90 ); ?>><?php esc_html_e( 'Last 90 Days', 'adserver' ); ?></option>
+							<option value="7" <?php selected( $days, 7 ); ?>><?php esc_html_e( 'Last 7 Days', 'iteearmah-ad-rotation-analytics' ); ?></option>
+							<option value="30" <?php selected( $days, 30 ); ?>><?php esc_html_e( 'Last 30 Days', 'iteearmah-ad-rotation-analytics' ); ?></option>
+							<option value="90" <?php selected( $days, 90 ); ?>><?php esc_html_e( 'Last 90 Days', 'iteearmah-ad-rotation-analytics' ); ?></option>
 						</select>
 					</div>
 
 					<div class="filter-group">
-						<label for="ad_id"><?php esc_html_e( 'Filter by Ad:', 'adserver' ); ?></label>
+						<label for="ad_id"><?php esc_html_e( 'Filter by Ad:', 'iteearmah-ad-rotation-analytics' ); ?></label>
 						<select name="ad_id" id="ad_id">
-							<option value="0"><?php esc_html_e( 'All Ads', 'adserver' ); ?></option>
+							<option value="0"><?php esc_html_e( 'All Ads', 'iteearmah-ad-rotation-analytics' ); ?></option>
 							<?php
 							$ads = get_posts( array( 'post_type' => 'wp_ad', 'posts_per_page' => -1 ) );
 							foreach ( $ads as $ad ) {
@@ -139,13 +139,13 @@ class WP_AdServer_Reports {
 						</select>
 					</div>
 
-					<?php submit_button( esc_html__( 'Filter', 'adserver' ), 'secondary', 'submit', false ); ?>
+					<?php submit_button( esc_html__( 'Filter', 'iteearmah-ad-rotation-analytics' ), 'secondary', 'submit', false ); ?>
 				</form>
 
 				<div class="report-actions">
 					<a href="<?php echo esc_url( add_query_arg( array( 'wp_ad_export' => 1, '_wpnonce' => wp_create_nonce( 'wp_ad_export_report' ) ) ) ); ?>" class="button button-primary">
 						<span class="dashicons dashicons-download" style="vertical-align: middle; margin-top: -3px; font-size: 18px;"></span>
-						<?php esc_html_e( 'Export to CSV', 'adserver' ); ?>
+						<?php esc_html_e( 'Export to CSV', 'iteearmah-ad-rotation-analytics' ); ?>
 					</a>
 				</div>
 			</div>
@@ -154,40 +154,40 @@ class WP_AdServer_Reports {
 				<div class="stat-card stat-impressions">
 					<div class="stat-icon"><span class="dashicons dashicons-visibility"></span></div>
 					<div class="stat-content">
-						<h3><?php esc_html_e( 'Total Impressions', 'adserver' ); ?></h3>
+						<h3><?php esc_html_e( 'Total Impressions', 'iteearmah-ad-rotation-analytics' ); ?></h3>
 						<div class="stat-value"><?php echo esc_html( number_format( $total_impressions ) ); ?></div>
 					</div>
 				</div>
 				<div class="stat-card stat-clicks">
 					<div class="stat-icon"><span class="dashicons dashicons-external"></span></div>
 					<div class="stat-content">
-						<h3><?php esc_html_e( 'Total Clicks', 'adserver' ); ?></h3>
+						<h3><?php esc_html_e( 'Total Clicks', 'iteearmah-ad-rotation-analytics' ); ?></h3>
 						<div class="stat-value"><?php echo esc_html( number_format( $total_clicks ) ); ?></div>
 					</div>
 				</div>
 				<div class="stat-card stat-ctr">
 					<div class="stat-icon"><span class="dashicons dashicons-chart-area"></span></div>
 					<div class="stat-content">
-						<h3><?php esc_html_e( 'Average CTR', 'adserver' ); ?></h3>
+						<h3><?php esc_html_e( 'Average CTR', 'iteearmah-ad-rotation-analytics' ); ?></h3>
 						<div class="stat-value"><?php echo esc_html( number_format( $avg_ctr, 2 ) ); ?>%</div>
 					</div>
 				</div>
 			</div>
 
 			<div class="card chart-container">
-				<h2><?php esc_html_e( 'Performance Over Time', 'adserver' ); ?></h2>
+				<h2><?php esc_html_e( 'Performance Over Time', 'iteearmah-ad-rotation-analytics' ); ?></h2>
 				<canvas id="performanceChart" width="400" height="150"></canvas>
 			</div>
 
 			<div class="reports-grid">
 				<div class="card">
-					<h2><?php esc_html_e( 'Devices', 'adserver' ); ?></h2>
+					<h2><?php esc_html_e( 'Devices', 'iteearmah-ad-rotation-analytics' ); ?></h2>
 					<table class="wp-list-table widefat fixed striped">
 						<thead>
 							<tr>
-								<th><?php esc_html_e( 'Device', 'adserver' ); ?></th>
-								<th><?php esc_html_e( 'Impressions', 'adserver' ); ?></th>
-								<th><?php esc_html_e( 'Clicks', 'adserver' ); ?></th>
+								<th><?php esc_html_e( 'Device', 'iteearmah-ad-rotation-analytics' ); ?></th>
+								<th><?php esc_html_e( 'Impressions', 'iteearmah-ad-rotation-analytics' ); ?></th>
+								<th><?php esc_html_e( 'Clicks', 'iteearmah-ad-rotation-analytics' ); ?></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -203,19 +203,19 @@ class WP_AdServer_Reports {
   			</div>
 
   				<div class="card">
-  					<h2><?php esc_html_e( 'Top Countries', 'adserver' ); ?></h2>
+  					<h2><?php esc_html_e( 'Top Countries', 'iteearmah-ad-rotation-analytics' ); ?></h2>
   					<table class="wp-list-table widefat fixed striped">
   						<thead>
   							<tr>
-  								<th><?php esc_html_e( 'Country', 'adserver' ); ?></th>
-  								<th><?php esc_html_e( 'Impressions', 'adserver' ); ?></th>
-  								<th><?php esc_html_e( 'Clicks', 'adserver' ); ?></th>
+  								<th><?php esc_html_e( 'Country', 'iteearmah-ad-rotation-analytics' ); ?></th>
+  								<th><?php esc_html_e( 'Impressions', 'iteearmah-ad-rotation-analytics' ); ?></th>
+  								<th><?php esc_html_e( 'Clicks', 'iteearmah-ad-rotation-analytics' ); ?></th>
   							</tr>
   						</thead>
   						<tbody>
   							<?php foreach ( array_slice( $country_stats, 0, 10 ) as $row ) : ?>
   								<tr>
-  									<td><?php echo esc_html( $row->label ?: __( 'Unknown', 'adserver' ) ); ?></td>
+  									<td><?php echo esc_html( $row->label ?: __( 'Unknown', 'iteearmah-ad-rotation-analytics' ) ); ?></td>
   									<td><?php echo esc_html( number_format( $row->impressions ) ); ?></td>
   									<td><?php echo esc_html( number_format( $row->clicks ) ); ?></td>
 								</tr>
@@ -234,7 +234,7 @@ class WP_AdServer_Reports {
 				data: {
 					labels: <?php echo wp_json_encode( $chart_labels ); ?>,
 					datasets: [{
-						label: '<?php esc_html_e( 'Impressions', 'adserver' ); ?>',
+						label: '<?php esc_html_e( 'Impressions', 'iteearmah-ad-rotation-analytics' ); ?>',
 						data: <?php echo wp_json_encode( $chart_impressions ); ?>,
 						borderColor: '#2271b1',
 						backgroundColor: function(context) {
@@ -251,7 +251,7 @@ class WP_AdServer_Reports {
 						pointRadius: 4,
 						pointHoverRadius: 6
 					}, {
-						label: '<?php esc_html_e( 'Clicks', 'adserver' ); ?>',
+						label: '<?php esc_html_e( 'Clicks', 'iteearmah-ad-rotation-analytics' ); ?>',
 						data: <?php echo wp_json_encode( $chart_clicks ); ?>,
 						borderColor: '#d63638',
 						backgroundColor: function(context) {

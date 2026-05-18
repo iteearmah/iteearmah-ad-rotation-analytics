@@ -8,7 +8,7 @@
         placeholders.forEach(function(container) {
             container.classList.add('wp-ad-loaded');
             var zone = container.getAttribute('data-zone');
-            var ajaxUrl = wpAdServer.ajaxurl;
+            var ajaxUrl = wpIteearmah Ad Rotation and Analytics.ajaxurl;
 
             var xhr = new XMLHttpRequest();
             xhr.open('GET', ajaxUrl + '?action=wp_adserver_get_ad&zone=' + encodeURIComponent(zone), true);
