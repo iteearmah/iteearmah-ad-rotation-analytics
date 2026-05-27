@@ -19,6 +19,11 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
  */
 global $wpdb;
 
+$keep_data = (int) get_option( 'itea_adserver_keep_data_on_uninstall', 0 );
+if ( 1 === $keep_data ) {
+	return;
+}
+
 // 1. Delete all ads (custom post type)
 $ads = get_posts( array(
 	'post_type'   => 'itea_ad',
@@ -34,6 +39,7 @@ foreach ( $ads as $ad ) {
 $options = array(
 	'itea_adserver_role_caps',
 	'itea_adserver_allowed_users',
+	'itea_adserver_keep_data_on_uninstall',
 	'options_itea_adserver_allowed_users_list', // SCF Option
 	'_options_itea_adserver_allowed_users_list', // SCF Option Hidden
 );
@@ -43,7 +49,7 @@ foreach ( $options as $option ) {
 }
 
 // 3. Drop the custom tracking table
-$table_name = $wpdb->prefix . 'ITEA_AdServer_Tracking';
+$table_name = $wpdb->prefix . 'itea_adserver_tracking';
 $wpdb->query( "DROP TABLE IF EXISTS {$table_name}" );
 
 // 4. Clean up transients and cache version

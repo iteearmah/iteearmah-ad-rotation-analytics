@@ -122,6 +122,11 @@ class ITEA_AdServer_Access {
 			'sanitize_callback' => 'sanitize_text_field',
 			'default'           => '',
 		) );
+		register_setting( 'itea_adserver_access_group', 'itea_adserver_keep_data_on_uninstall', array(
+			'type'              => 'boolean',
+			'sanitize_callback' => 'absint',
+			'default'           => 0,
+		) );
 
 		// Register the SCF/ACF options page slug so it's recognized
 		if ( function_exists( 'acf_add_options_page' ) ) {
@@ -166,6 +171,7 @@ class ITEA_AdServer_Access {
 		if ( isset( $_POST['itea_adserver_save_access'] ) && check_admin_referer( 'itea_adserver_access_nonce' ) ) {
 			self::save_role_caps();
 			self::save_allowed_users();
+			update_option( 'itea_adserver_keep_data_on_uninstall', isset( $_POST['itea_adserver_keep_data_on_uninstall'] ) ? 1 : 0 );
 
 			// Save SCF fields if available
 			if ( function_exists( 'acf_maybe_get_field' ) ) {
@@ -183,6 +189,7 @@ class ITEA_AdServer_Access {
 		$roles = wp_roles()->roles;
 		$caps  = self::get_capabilities();
 		$allowed_users = get_option( 'itea_adserver_allowed_users', '' );
+		$keep_data_on_uninstall = (int) get_option( 'itea_adserver_keep_data_on_uninstall', 0 );
 
 		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'user_access';
 		?>
@@ -239,6 +246,22 @@ class ITEA_AdServer_Access {
 										</td>
 									</tr>
 								<?php endif; ?>
+							</table>
+						</div>
+
+						<div class="card">
+							<h2>Uninstall Data Handling</h2>
+							<table class="form-table">
+								<tr>
+									<th scope="row">Keep data on uninstall</th>
+									<td>
+										<label for="itea_adserver_keep_data_on_uninstall">
+											<input type="checkbox" id="itea_adserver_keep_data_on_uninstall" name="itea_adserver_keep_data_on_uninstall" value="1" <?php checked( $keep_data_on_uninstall, 1 ); ?>>
+											Preserve ads, tracking data, and plugin settings when uninstalling.
+										</label>
+										<p class="description">If unchecked, all plugin data will be permanently deleted during uninstall.</p>
+									</td>
+								</tr>
 							</table>
 						</div>
 					<?php else : ?>

@@ -6,14 +6,48 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class ITEA_AdServer_Tracking {
 
+	public static function get_table_name() {
+		global $wpdb;
+		return $wpdb->prefix . 'itea_adserver_tracking';
+	}
+
+	public static function get_legacy_table_name() {
+		global $wpdb;
+		return $wpdb->prefix . 'ITEA_AdServer_Tracking';
+	}
+
 	public static function init() {
+		add_action( 'init', array( __CLASS__, 'maybe_repair_table' ), 0 );
 		add_action( 'template_redirect', array( __CLASS__, 'handle_click_tracking' ) );
 		add_action( 'init', array( __CLASS__, 'handle_script_request' ), 1 );
 	}
 
+	public static function table_exists( $table_name ) {
+		global $wpdb;
+		$existing_table = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) );
+		return $existing_table === $table_name;
+	}
+
+	public static function maybe_repair_table() {
+		$table_name = self::get_table_name();
+		if ( self::table_exists( $table_name ) ) {
+			return;
+		}
+
+		global $wpdb;
+		$legacy_table_name = self::get_legacy_table_name();
+		if ( self::table_exists( $legacy_table_name ) ) {
+			$wpdb->query( "RENAME TABLE `{$legacy_table_name}` TO `{$table_name}`" );
+		}
+
+		if ( ! self::table_exists( $table_name ) ) {
+			self::create_tables();
+		}
+	}
+
 	public static function create_tables() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'ITEA_AdServer_Tracking';
+		$table_name = self::get_table_name();
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE $table_name (
@@ -50,7 +84,7 @@ class ITEA_AdServer_Tracking {
 
 	public static function track_event( $ad_id, $type ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'ITEA_AdServer_Tracking';
+		$table_name = self::get_table_name();
 
 		$country = self::get_visitor_country();
 		$device  = self::get_visitor_device();
@@ -131,7 +165,7 @@ class ITEA_AdServer_Tracking {
 
 		if ( false === $total ) {
 			global $wpdb;
-			$table_name = $wpdb->prefix . 'ITEA_AdServer_Tracking';
+			$table_name = self::get_table_name();
 
 			$total = (int) $wpdb->get_var( $wpdb->prepare(
 				"SELECT COUNT(*) FROM $table_name WHERE ad_id = %d AND event_type = %s",
@@ -150,7 +184,7 @@ class ITEA_AdServer_Tracking {
 	 */
 	public static function get_ad_stats( $ad_id, $days = 7 ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'ITEA_AdServer_Tracking';
+		$table_name = self::get_table_name();
 		$results = array();
 
 		for ( $i = 0; $i < $days; $i++ ) {
@@ -205,7 +239,7 @@ class ITEA_AdServer_Tracking {
 		}
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'ITEA_AdServer_Tracking';
+		$table_name = self::get_table_name();
 
 		$defaults = array(
 			'days'    => 30,

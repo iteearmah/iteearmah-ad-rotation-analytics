@@ -249,7 +249,7 @@ class ITEA_AdServer_Admin {
 	 */
 	public static function render_dashboard_widget() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'ITEA_AdServer_Tracking';
+		$table_name = ITEA_AdServer_Tracking::get_table_name();
 
 		// Total ads count
 		$total_ads = wp_count_posts( 'itea_ad' )->publish;

@@ -7,7 +7,8 @@ Description: A specialized plugin to manage, rotate, track, and serve advertisem
 Version: 1.8.1
 Author: Samuel Attoh Armah
 Author URI: https://github.com/iteearmah
-License: GPL2
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: iteearmah-ad-rotation-analytics
 Domain Path: /languages
 */
