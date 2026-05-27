@@ -1,4 +1,4 @@
-= 1.8.2 =
+= 1.8.3 =
 * Added safety checks for get_field() and acf_add_local_field_group() to prevent crashes when Secure Custom Fields is not active.
 * Refined cache clearing logic to target only the plugin's custom post type.
 * Improved performance in the reporting dashboard by limiting ad filtering to the 100 most recent ads.

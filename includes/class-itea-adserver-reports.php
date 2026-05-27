@@ -28,7 +28,7 @@ class ITEA_AdServer_Reports {
 			return;
 		}
 
-		$version = defined( 'ITEA_ADSERVER_VERSION' ) ? ITEA_ADSERVER_VERSION : '1.8.2';
+		$version = defined( 'ITEA_ADSERVER_VERSION' ) ? ITEA_ADSERVER_VERSION : '1.8.3';
 
 		wp_register_script( 'chart-js', plugins_url( '../assets/js/chart.min.js', __FILE__ ), array(), '4.5.1', true );
 		wp_register_script( 'itea-adserver-reports-js', plugins_url( '../assets/js/reports.js', __FILE__ ), array( 'chart-js' ), $version, true );

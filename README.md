@@ -38,7 +38,7 @@
 ## 🔌 Requirements & Dependencies
 
 To ensure maximum performance and native integration, this plugin relies on:
-* **WordPress Version:** 5.0 or higher (Tested up to 6.9)
+* **WordPress Version:** 5.0 or higher (Tested up to 7.0)
 * **PHP Version:** 7.4 or higher
 * **Required Dependency:** [Secure Custom Fields](https://wordpress.org/plugins/secure-custom-fields/) (formerly ACF) must be installed and active. The plugin will gracefully display an admin notification if this is missing.
 
@@ -102,7 +102,7 @@ The plugin provides a intuitive, user-friendly interface for admins and contribu
 
 ## 🔄 Changelog
 
-### v1.8.2
+### v1.8.3
 * Added safety checks for `get_field()` and `acf_add_local_field_group()` to prevent crashes when Secure Custom Fields is not active.
 * Refined cache clearing logic to target only the plugin's custom post type.
 * Improved performance in the reporting dashboard by limiting ad filtering to the 100 most recent ads.
