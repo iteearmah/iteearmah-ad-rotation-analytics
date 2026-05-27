@@ -28,10 +28,11 @@ class ITEA_AdServer_Reports {
 			return;
 		}
 
-		$version = defined( 'ITEA_ADSERVER_VERSION' ) ? ITEA_ADSERVER_VERSION : '1.8.0';
+		$version = defined( 'ITEA_ADSERVER_VERSION' ) ? ITEA_ADSERVER_VERSION : '1.8.1';
 
-		// Load local Chart.js
-		wp_enqueue_script( 'chart-js', plugins_url( '../assets/js/chart.min.js', __FILE__ ), array(), '3.9.1', true );
+		wp_register_script( 'chart-js', plugins_url( '../assets/js/chart.min.js', __FILE__ ), array(), '4.5.1', true );
+		wp_register_script( 'itea-adserver-reports-js', plugins_url( '../assets/js/reports.js', __FILE__ ), array( 'chart-js' ), $version, true );
+		wp_enqueue_script( 'itea-adserver-reports-js' );
 
 		wp_enqueue_style( 'itea-adserver-admin', plugins_url( '../assets/css/admin.css', __FILE__ ), array(), $version );
 	}
@@ -109,6 +110,20 @@ class ITEA_AdServer_Reports {
 		}
 
 		$avg_ctr = $total_impressions > 0 ? ( $total_clicks / $total_impressions ) * 100 : 0;
+
+		$chart_data = array(
+			'labels' => $chart_labels,
+			'impressions' => $chart_impressions,
+			'clicks' => $chart_clicks,
+			'impressionsLabel' => __( 'Impressions', 'iteearmah-ad-rotation-analytics' ),
+			'clicksLabel' => __( 'Clicks', 'iteearmah-ad-rotation-analytics' ),
+		);
+
+		wp_add_inline_script(
+			'itea-adserver-reports-js',
+			'window.iteaAdserverReportsData = ' . wp_json_encode( $chart_data ) . ';',
+			'before'
+		);
 
 		?>
 		<div class="wrap itea-adserver-reports">
@@ -227,84 +242,6 @@ class ITEA_AdServer_Reports {
 				</div>
 			</div>
 		</div>
-
-		<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			var ctx = document.getElementById('performanceChart').getContext('2d');
-			new Chart(ctx, {
-				type: 'line',
-				data: {
-					labels: <?php echo wp_json_encode( $chart_labels ); ?>,
-					datasets: [{
-						label: '<?php esc_html_e( 'Impressions', 'iteearmah-ad-rotation-analytics' ); ?>',
-						data: <?php echo wp_json_encode( $chart_impressions ); ?>,
-						borderColor: '#2271b1',
-						backgroundColor: function(context) {
-							const chart = context.chart;
-							const {ctx, chartArea} = chart;
-							if (!chartArea) return null;
-							const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-							gradient.addColorStop(0, 'rgba(34, 113, 177, 0)');
-							gradient.addColorStop(1, 'rgba(34, 113, 177, 0.2)');
-							return gradient;
-						},
-						fill: true,
-						tension: 0.4,
-						pointRadius: 4,
-						pointHoverRadius: 6
-					}, {
-						label: '<?php esc_html_e( 'Clicks', 'iteearmah-ad-rotation-analytics' ); ?>',
-						data: <?php echo wp_json_encode( $chart_clicks ); ?>,
-						borderColor: '#d63638',
-						backgroundColor: function(context) {
-							const chart = context.chart;
-							const {ctx, chartArea} = chart;
-							if (!chartArea) return null;
-							const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-							gradient.addColorStop(0, 'rgba(214, 54, 56, 0)');
-							gradient.addColorStop(1, 'rgba(214, 54, 56, 0.2)');
-							return gradient;
-						},
-						fill: true,
-						tension: 0.4,
-						pointRadius: 4,
-						pointHoverRadius: 6
-					}]
-				},
-				options: {
-					responsive: true,
-					plugins: {
-						legend: {
-							position: 'top',
-						},
-						tooltip: {
-							mode: 'index',
-							intersect: false,
-						}
-					},
-					interaction: {
-						mode: 'nearest',
-						axis: 'x',
-						intersect: false
-					},
-					scales: {
-						y: {
-							beginAtZero: true,
-							grid: {
-								drawBorder: false,
-								color: 'rgba(0, 0, 0, 0.05)'
-							}
-						},
-						x: {
-							grid: {
-								display: false
-							}
-						}
-					}
-				}
-			});
-		});
-		</script>
 		<?php
 	}
 }

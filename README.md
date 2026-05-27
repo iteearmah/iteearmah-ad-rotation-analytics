@@ -102,12 +102,14 @@ The plugin provides a intuitive, user-friendly interface for admins and contribu
 
 ## 🔄 Changelog
 
-### v1.8.0
+### v1.8.1
 * Added safety checks for `get_field()` and `acf_add_local_field_group()` to prevent crashes when Secure Custom Fields is not active.
 * Refined cache clearing logic to target only the plugin's custom post type.
 * Improved performance in the reporting dashboard by limiting ad filtering to the 100 most recent ads.
 * Standardized asset versioning to use the plugin's version constant.
 * Hardened dependency checks to support both 'Secure Custom Fields' and standard 'ACF' naming conventions.
+* Updated bundled Chart.js to the latest stable branch and refactored reports rendering to use WordPress enqueue APIs (`wp_register_script()`, `wp_enqueue_script()`, `wp_add_inline_script()`).
+* Replaced direct shortcode `<script>` injection with WordPress-enqueued frontend script loading.
 
 ### v1.7.2
 * Removed external dependency on Chart.js CDN.

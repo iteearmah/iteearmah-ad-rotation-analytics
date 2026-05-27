@@ -17,9 +17,6 @@ class ITEA_AdServer_Renderer {
 		add_action( 'wp_ajax_nopriv_itea_adserver_get_ad', array( __CLASS__, 'ajax_get_ad' ) );
 		add_action( 'wp_ajax_itea_adserver_get_ad', array( __CLASS__, 'ajax_get_ad' ) );
 
-		// Script execution optimization
-		add_filter( 'script_loader_tag', array( __CLASS__, 'add_async_attribute' ), 10, 2 );
-
 		// Clear cache on ad updates
 		add_action( 'save_post_itea_ad', array( __CLASS__, 'clear_ad_list_cache' ) );
 		add_action( 'deleted_post', array( __CLASS__, 'clear_ad_list_cache' ) );
@@ -60,16 +57,12 @@ class ITEA_AdServer_Renderer {
 		}
 	}
 
-	public static function add_async_attribute( $tag, $handle ) {
-		if ( 'itea-adserver-js' !== $handle ) {
-			return $tag;
-		}
-		return str_replace( ' src', ' async defer src', $tag );
-	}
-
 	public static function enqueue_scripts() {
-  wp_register_style( 'iteearmah-ad-rotation-analytics', plugins_url( '../assets/css/style.css', __FILE__ ), array(), ITEA_ADSERVER_VERSION );
-		wp_register_script( 'itea-adserver-js', plugins_url( '../assets/js/wp-adserver.js', __FILE__ ), array(), ITEA_ADSERVER_VERSION, true );
+		wp_register_style( 'iteearmah-ad-rotation-analytics', plugins_url( '../assets/css/style.css', __FILE__ ), array(), ITEA_ADSERVER_VERSION );
+		wp_register_script( 'itea-adserver-js', plugins_url( '../assets/js/wp-adserver.js', __FILE__ ), array(), ITEA_ADSERVER_VERSION, array(
+			'in_footer' => true,
+			'strategy'  => 'defer',
+		) );
 		wp_localize_script( 'itea-adserver-js', 'iteaAdServerData', array(
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 		) );
@@ -116,18 +109,16 @@ class ITEA_AdServer_Renderer {
 			'zone' => '',
 		), $atts );
 
+		wp_enqueue_style( 'iteearmah-ad-rotation-analytics' );
+		wp_enqueue_script( 'itea-adserver-js' );
+
 		$zone_slug = ! empty( $atts['zone'] ) ? strtolower( sanitize_title( $atts['zone'] ) ) : 'default';
 		$unique_id = 'itea-ad-' . $zone_slug;
-		$url = add_query_arg( array(
-			'itea_ad_serve' => 1,
-			'zone'        => $zone_slug,
-			'uid'         => $unique_id,
-		), home_url( '/' ) );
 
 		return sprintf(
-			'<div id="%s" class="itea-adserver-script-container"></div><script src="%s" async></script>',
+			'<div id="%s" class="itea-adserver-placeholder itea-adserver-script-container" data-zone="%s"></div>',
 			esc_attr( $unique_id ),
-			esc_url( $url )
+			esc_attr( $zone_slug )
 		);
 	}
 
