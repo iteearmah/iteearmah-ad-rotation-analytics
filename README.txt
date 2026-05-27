@@ -3,7 +3,7 @@ Contributors: iteearmah
 Tags: ads, adserver, advertisement, ad-management, geo-targeting, ad-rotation, tracking, impressions, clicks, ad-zones, scheduling, device-targeting
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 1.8.1
+Stable tag: 1.8.2
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -80,7 +80,7 @@ An admin notice will be displayed prompting you to install the required plugin. 
 
 == Changelog ==
 
-= 1.8.1 =
+= 1.8.2 =
 * Added safety checks for get_field() and acf_add_local_field_group() to prevent crashes when Secure Custom Fields is not active.
 * Refined cache clearing logic to target only the plugin's custom post type.
 * Improved performance in the reporting dashboard by limiting ad filtering to the 100 most recent ads.
@@ -153,7 +153,7 @@ An admin notice will be displayed prompting you to install the required plugin. 
 
 == Upgrade Notice ==
 
-= 1.8.1 =
+= 1.8.2 =
 Security and performance hardening: improved SCF/ACF compatibility and dashboard performance. Recommended for all users.
 
 = 1.7.2 =
