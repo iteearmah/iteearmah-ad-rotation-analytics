@@ -5,6 +5,7 @@
 .distignore
 .editorconfig
 .wordpress-org
+.idea
 composer.json
 composer.lock
 node_modules
