@@ -3,7 +3,7 @@ Contributors: iteearmah
 Tags: ads, adserver, advertisement, ad-management, ad-rotation
 Requires at least: 5.0
 Tested up to: 7.0
-Stable tag: 1.9.0
+Stable tag: 1.9.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -79,6 +79,10 @@ An admin notice will be displayed prompting you to install the required plugin. 
 5. Dashboard widget showing quick ad performance stats.
 
 == Changelog ==
+
+= 1.9.1 =
+* Maintenance: Updated .distignore to include .idea directory.
+* Maintenance: Bumped version to 1.9.1.
 
 = 1.9.0 =
 * Security hardening: Improved nonce verification across several admin and tracking functions.
@@ -159,6 +163,9 @@ An admin notice will be displayed prompting you to install the required plugin. 
 * Detailed impression and click tracking with admin dashboard statistics.
 
 == Upgrade Notice ==
+
+= 1.9.1 =
+Maintenance release: Updated .distignore and bumped version.
 
 = 1.9.0 =
 Security and maintenance release: Improved security with better nonce verification and input sanitization, and resolved coding standard violations. Recommended for all users.
