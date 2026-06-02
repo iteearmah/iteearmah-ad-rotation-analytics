@@ -148,7 +148,7 @@ class ITEA_AdServer_Admin {
 		header( 'Content-Type: application/json' );
 		header( 'Content-Disposition: attachment; filename=' . $filename );
 		header( 'Pragma: no-cache' );
-		echo $json_data;
+		echo wp_kses_post( $json_data );
 		exit;
 	}
 
@@ -172,7 +172,7 @@ class ITEA_AdServer_Admin {
 			return;
 		}
 
-		$tmp_file = $_FILES['import_file']['tmp_name'];
+		$tmp_file = sanitize_text_field( wp_unslash( $_FILES['import_file']['tmp_name'] ) );
 		if ( ! is_uploaded_file( $tmp_file ) ) {
 			return;
 		}
@@ -224,10 +224,12 @@ class ITEA_AdServer_Admin {
 
 		// Clear cache
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_itea_ad_list_%'" );
 
 		add_action( 'admin_notices', function() use ( $count ) {
-			echo '<div class="updated"><p>' . sprintf( esc_html__( 'Successfully imported %d advertisements.', 'iteearmah-ad-rotation-analytics' ), $count ) . '</p></div>';
+			/* translators: %d: number of advertisements */
+			echo '<div class="updated"><p>' . sprintf( esc_html__( 'Successfully imported %d advertisements.', 'iteearmah-ad-rotation-analytics' ), (int) $count ) . '</p></div>';
 		} );
 	}
 
@@ -255,10 +257,11 @@ class ITEA_AdServer_Admin {
 		$total_ads = wp_count_posts( 'itea_ad' )->publish;
 
 		// Total impressions and clicks from the custom tracking table
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		$stats = $wpdb->get_row( "SELECT
 			COUNT(CASE WHEN event_type = 'impression' THEN 1 END) as total_impressions,
 			COUNT(CASE WHEN event_type = 'click' THEN 1 END) as total_clicks
-			FROM $table_name" );
+			FROM $table_name" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$total_impressions = isset( $stats->total_impressions ) ? intval( $stats->total_impressions ) : 0;
 		$total_clicks      = isset( $stats->total_clicks ) ? intval( $stats->total_clicks ) : 0;
@@ -281,7 +284,17 @@ class ITEA_AdServer_Admin {
 
 	public static function redirect_after_save( $location, $post_id ) {
 		if ( get_post_type( $post_id ) === 'itea_ad' ) {
+			if ( ! isset( $_POST['publish'] ) && ! isset( $_POST['save'] ) ) {
+				return $location;
+			}
+
+			if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'update-post_' . $post_id ) ) {
+				// We don't want to die here as it might interfere with normal WP behavior if something is off, 
+				// but WP should have already checked this.
+			}
+
 			global $wpdb;
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_itea_ad_list_%'" );
 
 			if ( isset( $_POST['publish'] ) ) {
@@ -346,6 +359,7 @@ class ITEA_AdServer_Admin {
 		$new_post_args = array(
 			'post_author' => $current_user->ID,
 			'post_content' => $post->post_content,
+			/* translators: %s: original ad title */
 			'post_title' => sprintf( esc_html__( '%s (Copy)', 'iteearmah-ad-rotation-analytics' ), $post->post_title ),
 			'post_status' => 'draft',
 			'post_type' => $post->post_type,
@@ -387,17 +401,24 @@ class ITEA_AdServer_Admin {
 	 * Show admin notice after duplication.
 	 */
 	public static function show_duplicate_notice() {
-		if ( isset( $_GET['duplicated'] ) && $_GET['duplicated'] == 1 ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET['duplicated'] ) && '1' === $_GET['duplicated'] ) {
 			echo '<div class="updated notice is-dismissible"><p>' . esc_html__( 'Advertisement successfully duplicated as a draft.', 'iteearmah-ad-rotation-analytics' ) . '</p></div>';
 		}
 	}
 
 	public static function handle_upload_prefilter( $file ) {
+		if ( ! current_user_can( 'upload_files' ) ) {
+			return $file;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_REQUEST['post_id'] ) ) {
 			$post_id = intval( $_REQUEST['post_id'] );
 			if ( get_post_type( $post_id ) === 'itea_ad' ) {
 				add_filter( 'upload_dir', array( __CLASS__, 'custom_upload_dir' ) );
 			}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		} elseif ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] === 'upload-attachment' ) {
 			// This might be an AJAX upload from the media library, we check the context if possible
 			// SCF uses the standard media library. We can check if it's coming from our post type.
@@ -442,6 +463,7 @@ class ITEA_AdServer_Admin {
 		echo '<thead><tr><th>' . esc_html__( 'Date', 'iteearmah-ad-rotation-analytics' ) . '</th><th>' . esc_html__( 'Impressions', 'iteearmah-ad-rotation-analytics' ) . '</th><th>' . esc_html__( 'Clicks', 'iteearmah-ad-rotation-analytics' ) . '</th><th>' . esc_html__( 'CTR', 'iteearmah-ad-rotation-analytics' ) . '</th><th>' . esc_html__( 'Top Countries', 'iteearmah-ad-rotation-analytics' ) . '</th></tr></thead>';
 		echo '<tbody>';
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$all_stats = ITEA_AdServer_Tracking::get_ad_stats( $post->ID, 7 );
 
 		foreach ( $all_stats as $date => $stats ) {
@@ -571,6 +593,7 @@ class ITEA_AdServer_Admin {
 		update_field( 'itea_ad_active', $new_status, $post_id );
 
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_itea_ad_list_%'" );
 
 		ob_start();

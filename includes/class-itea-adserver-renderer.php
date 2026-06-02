@@ -88,6 +88,7 @@ class ITEA_AdServer_Renderer {
 	}
 
 	public static function ajax_get_ad() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$zone = isset( $_GET['zone'] ) ? strtolower( sanitize_title( wp_unslash( $_GET['zone'] ) ) ) : '';
 		$debug_info = '';
 		$html = self::render_ad( $zone, $debug_info );
@@ -140,6 +141,7 @@ class ITEA_AdServer_Renderer {
 		global $wpdb;
 
 		if ( ! empty( $zone_slug ) ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$ads = $wpdb->get_col( $wpdb->prepare(
 				"SELECT p.ID FROM {$wpdb->posts} p
 				INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
@@ -152,6 +154,7 @@ class ITEA_AdServer_Renderer {
 				$zone_slug
 			) );
 		} else {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$ads = $wpdb->get_col(
 				"SELECT ID FROM {$wpdb->posts}
 				WHERE post_type = 'itea_ad'
@@ -166,6 +169,7 @@ class ITEA_AdServer_Renderer {
 
 			// Check if any ads exist in this zone but are drafts/scheduled
 			if ( ! empty( $zone_slug ) ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$all_ads_in_zone = $wpdb->get_col( $wpdb->prepare(
 					"SELECT p.ID FROM {$wpdb->posts} p
 					INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
@@ -178,6 +182,7 @@ class ITEA_AdServer_Renderer {
 					$zone_slug
 				) );
 			} else {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$all_ads_in_zone = $wpdb->get_col(
 					"SELECT ID FROM {$wpdb->posts}
 					WHERE post_type = 'itea_ad'

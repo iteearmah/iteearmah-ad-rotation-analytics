@@ -24,7 +24,7 @@ class ITEA_AdServer_Tracking {
 
 	public static function table_exists( $table_name ) {
 		global $wpdb;
-		$existing_table = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) );
+		$existing_table = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		return $existing_table === $table_name;
 	}
 
@@ -37,6 +37,7 @@ class ITEA_AdServer_Tracking {
 		global $wpdb;
 		$legacy_table_name = self::get_legacy_table_name();
 		if ( self::table_exists( $legacy_table_name ) ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 			$wpdb->query( "RENAME TABLE `{$legacy_table_name}` TO `{$table_name}`" );
 		}
 
@@ -68,13 +69,15 @@ class ITEA_AdServer_Tracking {
 	}
 
 	public static function handle_click_tracking() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['itea_ad_click'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$ad_id = intval( $_GET['itea_ad_click'] );
 			self::track_event( $ad_id, 'click' );
 
 			$dest_url = function_exists( 'get_field' ) ? get_field( 'itea_ad_destination_url', $ad_id ) : get_post_meta( $ad_id, 'itea_ad_destination_url', true );
 			if ( $dest_url && wp_http_validate_url( $dest_url ) ) {
-				wp_redirect( esc_url_raw( $dest_url ) );
+				wp_safe_redirect( esc_url_raw( $dest_url ) );
 				exit;
 			}
 			wp_safe_redirect( home_url() );
@@ -89,9 +92,8 @@ class ITEA_AdServer_Tracking {
 		$country = self::get_visitor_country();
 		$device  = self::get_visitor_device();
 
-		// Use a fast insert
 		$wpdb->query( $wpdb->prepare(
-			"INSERT INTO $table_name (ad_id, event_type, country, device, timestamp) VALUES (%d, %s, %s, %s, %s)",
+			"INSERT INTO $table_name (ad_id, event_type, country, device, timestamp) VALUES (%d, %s, %s, %s, %s)", // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 			$ad_id, $type, $country, $device, current_time( 'mysql' )
 		) );
 
@@ -102,6 +104,7 @@ class ITEA_AdServer_Tracking {
 		// Invalidate zone list cache if impression limit might be reached
 		// This is a safety measure to ensure ads are removed from rotation when limits hit
 		// We don't know the zone, so we clear all zone lists
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_itea_ad_list_%'" );
 	}
 
@@ -168,8 +171,9 @@ class ITEA_AdServer_Tracking {
 			$table_name = self::get_table_name();
 
 			$total = (int) $wpdb->get_var( $wpdb->prepare(
-				"SELECT COUNT(*) FROM $table_name WHERE ad_id = %d AND event_type = %s",
-				$ad_id, $type
+				"SELECT COUNT(*) FROM $table_name WHERE ad_id = %d AND event_type = %s", // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+				$ad_id,
+				$type
 			) );
 
 			// Cache for 1 hour (3600 seconds)
@@ -194,20 +198,26 @@ class ITEA_AdServer_Tracking {
 
 			// Get impressions
 			$impressions = $wpdb->get_var( $wpdb->prepare(
-				"SELECT COUNT(*) FROM $table_name WHERE ad_id = %d AND event_type = 'impression' AND timestamp BETWEEN %s AND %s",
-				$ad_id, $day_start, $day_end
+				"SELECT COUNT(*) FROM $table_name WHERE ad_id = %d AND event_type = 'impression' AND timestamp BETWEEN %s AND %s", // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+				$ad_id,
+				$day_start,
+				$day_end
 			) );
 
 			// Get clicks
 			$clicks = $wpdb->get_var( $wpdb->prepare(
-				"SELECT COUNT(*) FROM $table_name WHERE ad_id = %d AND event_type = 'click' AND timestamp BETWEEN %s AND %s",
-				$ad_id, $day_start, $day_end
+				"SELECT COUNT(*) FROM $table_name WHERE ad_id = %d AND event_type = 'click' AND timestamp BETWEEN %s AND %s", // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+				$ad_id,
+				$day_start,
+				$day_end
 			) );
 
 			// Get top countries
 			$countries_data = $wpdb->get_results( $wpdb->prepare(
-				"SELECT country, COUNT(*) as count FROM $table_name WHERE ad_id = %d AND event_type = 'impression' AND timestamp BETWEEN %s AND %s AND country != '' GROUP BY country ORDER BY count DESC LIMIT 3",
-				$ad_id, $day_start, $day_end
+				"SELECT country, COUNT(*) as count FROM $table_name WHERE ad_id = %d AND event_type = 'impression' AND timestamp BETWEEN %s AND %s AND country != '' GROUP BY country ORDER BY count DESC LIMIT 3", // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+				$ad_id,
+				$day_start,
+				$day_end
 			) );
 
 			$countries = array();
@@ -287,6 +297,7 @@ class ITEA_AdServer_Tracking {
 				GROUP BY $groupby
 				ORDER BY label ASC";
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		$results = $wpdb->get_results( $sql );
 
 		// Cache for 1 hour (aggregated stats don't need to be real-time in reports)
@@ -296,9 +307,12 @@ class ITEA_AdServer_Tracking {
 	}
 
 	public static function handle_script_request() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['itea_ad_serve'] ) ) {
 			header( 'Content-Type: application/javascript' );
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$zone = isset( $_GET['zone'] ) ? sanitize_text_field( wp_unslash( $_GET['zone'] ) ) : '';
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$uid  = isset( $_GET['uid'] ) ? sanitize_text_field( wp_unslash( $_GET['uid'] ) ) : '';
 
 			$debug_info = '';

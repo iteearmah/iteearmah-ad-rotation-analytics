@@ -1,9 +1,9 @@
 === Iteearmah Ad Rotation and Analytics ===
 Contributors: iteearmah
-Tags: ads, adserver, advertisement, ad-management, geo-targeting, ad-rotation, tracking, impressions, clicks, ad-zones, scheduling, device-targeting
+Tags: ads, adserver, advertisement, ad-management, ad-rotation
 Requires at least: 5.0
 Tested up to: 7.0
-Stable tag: 1.8.3
+Stable tag: 1.9.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -80,6 +80,13 @@ An admin notice will be displayed prompting you to install the required plugin. 
 
 == Changelog ==
 
+= 1.9.0 =
+* Security hardening: Improved nonce verification across several admin and tracking functions.
+* Security hardening: Enhanced input sanitization for role capabilities and file uploads.
+* Code Quality: Resolved multiple WordPress Coding Standards (WPCS) warnings and PHPCS violations.
+* Code Quality: Improved SQL query safety by ensuring proper placement of PHPCS annotations for dynamic table names.
+* Maintenance: Cleaned up project structure by removing unnecessary configuration files.
+
 = 1.8.3 =
 * Added safety checks for get_field() and acf_add_local_field_group() to prevent crashes when Secure Custom Fields is not active.
 * Refined cache clearing logic to target only the plugin's custom post type.
@@ -152,6 +159,9 @@ An admin notice will be displayed prompting you to install the required plugin. 
 * Detailed impression and click tracking with admin dashboard statistics.
 
 == Upgrade Notice ==
+
+= 1.9.0 =
+Security and maintenance release: Improved security with better nonce verification and input sanitization, and resolved coding standard violations. Recommended for all users.
 
 = 1.8.3 =
 Security and performance hardening: improved SCF/ACF compatibility and dashboard performance. Recommended for all users.

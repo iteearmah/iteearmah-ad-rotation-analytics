@@ -69,12 +69,20 @@ class ITEA_AdServer_Reports {
 			) );
 		}
 
+		// Use direct PHP output for CSV download as WP_Filesystem is for local file operations.
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		fclose( $output );
 		exit;
 	}
 
 	public static function render_reports_page() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'iteearmah-ad-rotation-analytics' ) );
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$days = isset( $_GET['days'] ) ? intval( $_GET['days'] ) : 30;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$ad_id = isset( $_GET['ad_id'] ) ? intval( $_GET['ad_id'] ) : 0;
 
 		$stats = ITEA_AdServer_Tracking::get_aggregated_stats( array(

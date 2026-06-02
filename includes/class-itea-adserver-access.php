@@ -339,9 +339,12 @@ class ITEA_AdServer_Access {
 			return;
 		}
 
-		$submitted_caps = isset( $_POST['role_caps'] ) ? array_map( function( $caps ) {
-			return array_map( 'absint', (array) $caps );
-		}, (array) wp_unslash( $_POST['role_caps'] ) ) : array();
+		if ( ! isset( $_POST['role_caps'] ) || ! check_admin_referer( 'itea_adserver_access_nonce' ) ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$submitted_caps = self::sanitize_role_caps( wp_unslash( $_POST['role_caps'] ) );
 		$roles = wp_roles();
 		$available_caps = self::get_capabilities();
 
@@ -363,6 +366,10 @@ class ITEA_AdServer_Access {
 
 	private static function save_allowed_users() {
 		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		if ( ! check_admin_referer( 'itea_adserver_access_nonce' ) ) {
 			return;
 		}
 
