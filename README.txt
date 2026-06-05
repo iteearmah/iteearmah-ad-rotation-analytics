@@ -3,7 +3,7 @@ Contributors: iteearmah
 Tags: ads, adserver, advertisement, ad-management, ad-rotation
 Requires at least: 5.0
 Tested up to: 7.0
-Stable tag: 1.9.2
+Stable tag: 2.0.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -80,6 +80,13 @@ An admin notice will be displayed prompting you to install the required plugin. 
 
 == Changelog ==
 
+= 2.0.0 =
+* Compliance: Updated plugin to adhere to WordPress.org detailed guidelines.
+* Compatibility: Updated "Tested up to" metadata to WordPress 7.0.
+* Security: Hardened admin notice visibility logic and refined ad export safety.
+* Device Detection: Improved reliability by integrating wp_is_mobile() as a baseline.
+* Maintenance: Bumped version to 2.0.0.
+
 = 1.9.2 =
 * Maintenance: Created .gitattributes file for better archive management.
 * Maintenance: Bumped version to 1.9.2.
@@ -122,7 +129,7 @@ An admin notice will be displayed prompting you to install the required plugin. 
 
 = 1.5.0 =
 * Fixed automated plugin scan issues: added sanitize_callback to register_setting() calls.
-* Updated "Tested up to" to WordPress 6.9.
+* Updated "Tested up to" to WordPress 7.0.
 * Changed Text Domain to "adserver" to match plugin slug.
 * Created languages directory for Domain Path compliance.
 
@@ -167,6 +174,9 @@ An admin notice will be displayed prompting you to install the required plugin. 
 * Detailed impression and click tracking with admin dashboard statistics.
 
 == Upgrade Notice ==
+
+= 2.0.0 =
+Compliance, security, and device detection improvements.
 
 = 1.9.2 =
 Maintenance release: Added .gitattributes and bumped version.

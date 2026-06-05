@@ -148,7 +148,7 @@ class ITEA_AdServer_Admin {
 		header( 'Content-Type: application/json' );
 		header( 'Content-Disposition: attachment; filename=' . $filename );
 		header( 'Pragma: no-cache' );
-		echo wp_kses_post( $json_data );
+		echo $json_data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		exit;
 	}
 

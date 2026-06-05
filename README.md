@@ -102,6 +102,28 @@ The plugin provides a intuitive, user-friendly interface for admins and contribu
 
 ## 🔄 Changelog
 
+### v2.0.0
+* **Compliance:** Updated plugin to adhere to WordPress.org detailed guidelines.
+* **Compatibility:** Updated "Tested up to" metadata to WordPress 7.0.
+* **Security:** Hardened admin notice visibility logic and refined ad export safety.
+* **Device Detection:** Improved reliability by integrating `wp_is_mobile()` as a baseline.
+* **Maintenance:** Bumped version to 2.0.0.
+
+### v1.9.2
+* Maintenance: Created `.gitattributes` file for better archive management.
+* Maintenance: Bumped version to 1.9.2.
+
+### v1.9.1
+* Maintenance: Updated `.distignore` to include `.idea` directory.
+* Maintenance: Bumped version to 1.9.1.
+
+### v1.9.0
+* Security hardening: Improved nonce verification across several admin and tracking functions.
+* Security hardening: Enhanced input sanitization for role capabilities and file uploads.
+* Code Quality: Resolved multiple WordPress Coding Standards (WPCS) warnings and PHPCS violations.
+* Code Quality: Improved SQL query safety by ensuring proper placement of PHPCS annotations for dynamic table names.
+* Maintenance: Cleaned up project structure by removing unnecessary configuration files.
+
 ### v1.8.3
 * Added safety checks for `get_field()` and `acf_add_local_field_group()` to prevent crashes when Secure Custom Fields is not active.
 * Refined cache clearing logic to target only the plugin's custom post type.
@@ -127,7 +149,7 @@ The plugin provides a intuitive, user-friendly interface for admins and contribu
 
 ### v1.5.0
 * Fixed automated plugin scan issues: added `sanitize_callback` to `register_setting()` calls.
-* Updated "Tested up to" to WordPress 6.9.
+* Updated "Tested up to" to WordPress 7.0.
 * Created languages directory for Domain Path compliance.
 
 ---

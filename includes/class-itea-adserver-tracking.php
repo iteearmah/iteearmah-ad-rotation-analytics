@@ -148,10 +148,12 @@ class ITEA_AdServer_Tracking {
 		}
 
 		// Use WordPress's built-in wp_is_mobile() as a baseline, but refine it
-		if ( preg_match( '/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i', $user_agent ) ) {
-			$visitor_device = 'tablet';
-		} elseif ( preg_match( '/(up.browser|up.link|mmp|symbian|smartphone|midp|wap|phone|android|iemobile)/i', $user_agent ) ) {
-			$visitor_device = 'mobile';
+		if ( wp_is_mobile() ) {
+			if ( preg_match( '/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i', $user_agent ) ) {
+				$visitor_device = 'tablet';
+			} else {
+				$visitor_device = 'mobile';
+			}
 		} else {
 			$visitor_device = 'desktop';
 		}

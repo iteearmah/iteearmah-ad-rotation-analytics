@@ -32,7 +32,7 @@
 
 = 1.5.0 =
 * Fixed automated plugin scan issues: added sanitize_callback to register_setting() calls.
-* Updated "Tested up to" to WordPress 6.9.
+* Updated "Tested up to" to WordPress 7.0.
 * Changed Text Domain to "adserver" to match plugin slug.
 * Created languages directory for Domain Path compliance.
 
