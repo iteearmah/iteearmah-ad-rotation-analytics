@@ -23,8 +23,9 @@ class ITEA_AdServer_Access {
 			acf_enqueue_scripts();
 		}
 
-		wp_enqueue_style( 'itea-adserver-admin-css', plugins_url( '../assets/css/admin.css', __FILE__ ), array(), '1.1.0' );
-		wp_enqueue_script( 'itea-adserver-admin-js', plugins_url( '../assets/js/admin.js', __FILE__ ), array( 'jquery' ), '1.1.0', true );
+		$version = defined( 'ITEA_ADSERVER_VERSION' ) ? ITEA_ADSERVER_VERSION : '2.0.0';
+		wp_enqueue_style( 'itea-adserver-admin-css', plugins_url( '../assets/css/admin.css', __FILE__ ), array(), $version );
+		wp_enqueue_script( 'itea-adserver-admin-js', plugins_url( '../assets/js/admin.js', __FILE__ ), array( 'jquery' ), $version, true );
 	}
 
 	public static function check_user_whitelist( $allcaps, $caps, $args ) {
