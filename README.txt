@@ -4,6 +4,7 @@ Tags: ads, adserver, advertisement, ad-management, ad-rotation
 Requires at least: 5.0
 Tested up to: 7.0
 Stable tag: 2.0.0
+Donate link: https://buymeacoffee.com/iteearmah
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
