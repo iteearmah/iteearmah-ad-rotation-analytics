@@ -3,7 +3,7 @@ Contributors: iteearmah
 Tags: ads, adserver, advertisement, ad-management, ad-rotation
 Requires at least: 5.0
 Tested up to: 7.0
-Stable tag: 2.2.1
+Stable tag: 2.2.2
 Donate link: https://buymeacoffee.com/iteearmah
 Requires PHP: 7.4
 License: GPLv2 or later
@@ -80,6 +80,9 @@ An admin notice will be displayed prompting you to install the required plugin. 
 5. Dashboard widget showing quick ad performance stats.
 
 == Changelog ==
+
+= 2.2.2 =
+* UI: Removed "Integration Codes" column from the advertisements list table for a cleaner interface.
 
 = 2.2.1 =
 * Maintenance: Renamed all ACF (Advanced Custom Fields) integration references to SCF (Secure Custom Fields).
@@ -193,6 +196,9 @@ An admin notice will be displayed prompting you to install the required plugin. 
 * Detailed impression and click tracking with admin dashboard statistics.
 
 == Upgrade Notice ==
+
+= 2.2.2 =
+UI improvements for the Ads list table.
 
 = 2.2.1 =
 Renamed ACF to SCF references for better branding and compatibility.

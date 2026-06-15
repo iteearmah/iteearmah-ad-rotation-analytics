@@ -101,6 +101,9 @@ The plugin provides a intuitive, user-friendly interface for admins and contribu
 
 ## 🔄 Changelog
 
+### v2.2.2
+* **UI:** Removed "Integration Codes" column from the advertisements list table for a cleaner interface.
+
 ### v2.2.1
 * **Maintenance:** Renamed all ACF (Advanced Custom Fields) integration references to SCF (Secure Custom Fields) for better alignment with the required dependency.
 * **Compatibility:** Added support for native SCF function names (`scf_`) while maintaining backward compatibility with `acf_` functions.

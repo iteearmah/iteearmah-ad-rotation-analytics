@@ -698,7 +698,6 @@ class ITEA_AdServer_Admin {
 			if ( $key === 'title' ) {
 				$new_columns[ $key ] = $value;
 				$new_columns['active']   = esc_html__( 'Status', 'iteearmah-ad-rotation-analytics' );
-				$new_columns['view_tag'] = esc_html__( 'Integration Codes', 'iteearmah-ad-rotation-analytics' );
 				continue;
 			}
 			if ( $key === 'date' ) {
@@ -740,15 +739,6 @@ class ITEA_AdServer_Admin {
 			case 'weight':
 				$weight = function_exists( 'get_field' ) ? get_field( 'itea_ad_weight', $post_id ) : get_post_meta( $post_id, 'itea_ad_weight', true );
 				echo esc_html( $weight ?: 1 );
-				break;
-			case 'view_tag':
-				printf(
-					'<a href="#" class="itea-adserver-get-shortcode" data-id="%d" data-title="%s" data-type="ad" aria-label="%s"><span class="dashicons dashicons-media-code" title="%s"></span></a>',
-					intval( $post_id ),
-					esc_attr( get_the_title( $post_id ) ),
-					esc_attr__( 'Get integration codes', 'iteearmah-ad-rotation-analytics' ),
-					esc_attr__( 'View Integration Codes', 'iteearmah-ad-rotation-analytics' )
-				);
 				break;
 		}
 	}
