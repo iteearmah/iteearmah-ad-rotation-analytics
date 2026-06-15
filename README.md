@@ -66,7 +66,6 @@ Place advertisements anywhere in your post content, pages, or widgets using our 
 Do you want to serve advertisements on an external HTML site or partner network? You can fetch and render your ads remotely using our asynchronous script integration:
 
 ```html
-<div id="itea-ad-sidebar"></div>
 <script src="https://your-site.com/?itea_ad_serve=1&zone=sidebar&uid=itea-ad-sidebar" async></script>
 ```
 *Note: Make sure to replace `https://your-site.com/` with your WordPress site URL and `sidebar` with your zone's slug.*

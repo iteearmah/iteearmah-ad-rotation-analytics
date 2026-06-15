@@ -7,11 +7,19 @@
 
         placeholders.forEach(function(container) {
             container.classList.add('itea-ad-loaded');
-            var zone = container.getAttribute('data-zone');
+            var zone = container.getAttribute('data-zone') || '';
+            var adId = container.getAttribute('data-ad-id') || '';
             var ajaxUrl = iteaAdServerData.ajaxurl;
 
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', ajaxUrl + '?action=itea_adserver_get_ad&zone=' + encodeURIComponent(zone), true);
+            var query = '?action=itea_adserver_get_ad';
+            if (adId) {
+                query += '&ad_id=' + encodeURIComponent(adId);
+            } else if (zone) {
+                query += '&zone=' + encodeURIComponent(zone);
+            }
+            
+            xhr.open('GET', ajaxUrl + query, true);
             xhr.onload = function() {
                 if (xhr.status >= 200 && xhr.status < 400) {
                     var response = JSON.parse(xhr.responseText);

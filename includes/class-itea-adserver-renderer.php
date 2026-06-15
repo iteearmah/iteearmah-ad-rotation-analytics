@@ -90,8 +90,15 @@ class ITEA_AdServer_Renderer {
 	public static function ajax_get_ad() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$zone = isset( $_GET['zone'] ) ? strtolower( sanitize_title( wp_unslash( $_GET['zone'] ) ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$ad_id = isset( $_GET['ad_id'] ) ? intval( $_GET['ad_id'] ) : 0;
+
 		$debug_info = '';
-		$html = self::render_ad( $zone, $debug_info );
+		if ( $ad_id ) {
+			$html = self::render_single_ad( $ad_id, $debug_info );
+		} else {
+			$html = self::render_ad( $zone, $debug_info );
+		}
 
 		if ( ! $html && current_user_can( 'manage_options' ) ) {
 			$html = '<div style="border:1px dashed #ccc; padding:10px; color:#666; font-size:12px;">';
@@ -108,19 +115,81 @@ class ITEA_AdServer_Renderer {
 	public static function render_script_shortcode( $atts ) {
 		$atts = shortcode_atts( array(
 			'zone' => '',
+			'id'   => '',
 		), $atts );
 
 		wp_enqueue_style( 'iteearmah-ad-rotation-analytics' );
 		wp_enqueue_script( 'itea-adserver-js' );
 
-		$zone_slug = ! empty( $atts['zone'] ) ? strtolower( sanitize_title( $atts['zone'] ) ) : 'default';
-		$unique_id = 'itea-ad-' . $zone_slug;
+		$zone_slug = ! empty( $atts['zone'] ) ? strtolower( sanitize_title( $atts['zone'] ) ) : '';
+		$ad_id     = ! empty( $atts['id'] ) ? intval( $atts['id'] ) : 0;
+		$unique_id = 'itea-ad-' . ( $ad_id ? $ad_id : ( $zone_slug ? $zone_slug : 'default' ) );
 
 		return sprintf(
-			'<div id="%s" class="itea-adserver-placeholder itea-adserver-script-container" data-zone="%s"></div>',
+			'<div id="%s" class="itea-adserver-placeholder itea-adserver-script-container" data-zone="%s" data-ad-id="%d"></div>',
 			esc_attr( $unique_id ),
-			esc_attr( $zone_slug )
+			esc_attr( $zone_slug ),
+			intval( $ad_id )
 		);
+	}
+
+	public static function render_single_ad( $ad_id, &$debug_info = '' ) {
+		$ad_id = intval( $ad_id );
+		$post  = get_post( $ad_id );
+
+		if ( ! $post || $post->post_type !== 'itea_ad' || $post->post_status !== 'publish' ) {
+			$debug_info = 'Ad not found, not published, or incorrect post type.';
+			return '';
+		}
+
+		// We can reuse parts of render_ad logic or just call it if we can filter by ID
+		// But render_ad is complex. Let's implement a simple version for single ad.
+		
+		// Check for Secure Custom Fields
+		if ( ! function_exists( 'get_field' ) ) {
+			$debug_info = 'Secure Custom Fields (ACF) is not active.';
+			return '';
+		}
+
+		// Basic check for expiry etc (simplified version of render_ad logic)
+		$ad_type = get_field( 'ad_type', $ad_id );
+		if ( ! $ad_type ) {
+			$debug_info = 'Ad type not set.';
+			return '';
+		}
+
+		// For now, let's just use the existing render_ad logic by passing the ID as a temporary filter if possible
+		// Actually, I'll just manually render it here to be safe and simple.
+		
+		ob_start();
+		?>
+		<div class="itea-ad-container" data-ad-id="<?php echo esc_attr( $ad_id ); ?>">
+			<?php
+			if ( $ad_type === 'image' ) {
+				$image = get_field( 'ad_image', $ad_id );
+				$link  = get_field( 'ad_link', $ad_id );
+				if ( $image ) {
+					if ( $link ) {
+						echo '<a href="' . esc_url( $link ) . '" target="_blank" class="itea-ad-link" data-ad-id="' . esc_attr( $ad_id ) . '">';
+					}
+					echo '<img src="' . esc_url( $image['url'] ) . '" alt="' . esc_attr( $post->post_title ) . '" style="max-width:100%; height:auto;">';
+					if ( $link ) {
+						echo '</a>';
+					}
+				}
+			} elseif ( $ad_type === 'html' ) {
+				$html_content = get_field( 'ad_html', $ad_id );
+				echo $html_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			}
+			?>
+		</div>
+		<?php
+		// Log impression
+		if ( class_exists( 'ITEA_AdServer_Tracking' ) ) {
+			ITEA_AdServer_Tracking::log_impression( $ad_id );
+		}
+		
+		return ob_get_clean();
 	}
 
 	private static function get_cached_field( $field_name, $post_id ) {

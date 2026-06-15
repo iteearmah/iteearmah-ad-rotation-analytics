@@ -340,7 +340,14 @@ class ITEA_AdServer_Tracking {
 				echo "(function() {
 					var serveAd = function() {
 						var container = document.getElementById(" . wp_json_encode( $uid ) . ");
-						if (!container) return;
+						if (!container) {
+							// If container doesn't exist, create it before the script tag
+							container = document.createElement('div');
+							container.id = " . wp_json_encode( $uid ) . ";
+							var scripts = document.getElementsByTagName('script');
+							var thisScript = scripts[scripts.length - 1];
+							thisScript.parentNode.insertBefore(container, thisScript);
+						}
 
 						var xhr = new XMLHttpRequest();
 						xhr.open('GET', " . wp_json_encode( admin_url( 'admin-ajax.php' ) . '?action=itea_adserver_get_ad&zone=' . urlencode( $zone ) ) . ", true);

@@ -61,7 +61,7 @@ Statistics for each ad are displayed in the "Ad Statistics" meta box when editin
 2. Note the **Slug** of the zone you created.
 3. Edit an advertisement and select the zone from the **Ad Zones** box on the right.
 4. Use the shortcode `[itea_adserver zone="sidebar"]` (replace "sidebar" with your slug) to display ads from that zone.
-5. You can also use `<div id="itea-ad-sidebar"></div><script src="https://your-site.com/?itea_ad_serve=1&zone=sidebar&uid=itea-ad-sidebar" async></script>` for remote placement.
+5. You can also use `<script src="https://your-site.com/?itea_ad_serve=1&zone=sidebar&uid=itea-ad-sidebar" async></script>` for remote placement.
 
 = Does this plugin require any external services? =
 

@@ -13,13 +13,15 @@ class ITEA_AdServer_Admin {
 		add_filter( 'manage_edit-itea_ad_sortable_columns', array( __CLASS__, 'make_columns_sortable' ) );
 
 		// Row actions
-		add_filter( 'post_row_actions', array( __CLASS__, 'add_duplicate_link' ), 10, 2 );
+		add_filter( 'post_row_actions', array( __CLASS__, 'add_row_actions' ), 10, 2 );
 		add_action( 'admin_action_itea_adserver_duplicate_ad', array( __CLASS__, 'handle_duplicate_ad' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'show_duplicate_notice' ) );
+		add_action( 'admin_footer', array( __CLASS__, 'render_shortcode_modal' ) );
 
 		// Ad Zone Taxonomy columns
-		add_filter( 'manage_edit-ad_zone_columns', array( __CLASS__, 'add_zone_columns' ) );
-		add_action( 'manage_ad_zone_custom_column', array( __CLASS__, 'render_zone_columns' ), 10, 3 );
+		add_filter( 'manage_edit-itea_ad_zone_columns', array( __CLASS__, 'add_zone_columns' ) );
+		add_action( 'manage_itea_ad_zone_custom_column', array( __CLASS__, 'render_zone_columns' ), 10, 3 );
+		add_filter( 'manage_itea_ad_zone_row_actions', array( __CLASS__, 'add_zone_row_actions' ), 10, 2 );
 
 		// Custom upload folder for ads
 		add_filter( 'wp_handle_upload_prefilter', array( __CLASS__, 'handle_upload_prefilter' ) );
@@ -43,6 +45,95 @@ class ITEA_AdServer_Admin {
 
 		// AJAX Toggle Ad Status
 		add_action( 'wp_ajax_itea_adserver_toggle_status', array( __CLASS__, 'ajax_toggle_status' ) );
+
+		// Edit screen actions
+		add_action( 'edit_form_after_title', array( __CLASS__, 'display_integration_codes' ) );
+
+		// Zone Edit/Add screens
+		add_action( 'itea_ad_zone_edit_form_fields', array( __CLASS__, 'display_zone_integration_codes' ), 10, 2 );
+		add_action( 'itea_ad_zone_add_form_fields', array( __CLASS__, 'display_zone_integration_codes' ), 10, 2 );
+	}
+
+	/**
+	 * Display Integration Codes on the zone edit screen.
+	 */
+	public static function display_zone_integration_codes( $term_or_taxonomy, $taxonomy = null ) {
+		if ( is_object( $term_or_taxonomy ) ) {
+			$term = $term_or_taxonomy;
+			$slug = $term->slug;
+		} else {
+			$slug = '';
+		}
+
+		if ( ! $slug ) {
+			return;
+		}
+
+		$shortcode_php = '[itea_adserver zone="' . $slug . '"]';
+		$uid = 'itea-ad-' . $slug;
+		$url = add_query_arg( array(
+			'itea_ad_serve' => 1,
+			'zone'          => $slug,
+			'uid'           => $uid,
+		), home_url( '/' ) );
+		$shortcode_js = '<script src="' . esc_url( $url ) . '" async></script>';
+		?>
+		<tr class="form-field">
+			<th scope="row" valign="top"><label><?php esc_html_e( 'Integration Codes', 'iteearmah-ad-rotation-analytics' ); ?></label></th>
+			<td>
+				<div class="itea-ad-edit-codes" style="margin-top: 0;">
+					<div class="itea-edit-code-section">
+						<label><strong><?php esc_html_e( 'PHP Shortcode', 'iteearmah-ad-rotation-analytics' ); ?></strong></label>
+						<div class="itea-copy-box">
+							<code id="itea-edit-shortcode-php"><?php echo esc_html( $shortcode_php ); ?></code>
+							<button type="button" class="button itea-copy-btn" data-target="itea-edit-shortcode-php"><?php esc_html_e( 'Copy', 'iteearmah-ad-rotation-analytics' ); ?></button>
+						</div>
+					</div>
+
+					<div class="itea-edit-code-section">
+						<label><strong><?php esc_html_e( 'JavaScript Tag', 'iteearmah-ad-rotation-analytics' ); ?></strong></label>
+						<div class="itea-copy-box">
+							<code id="itea-edit-shortcode-js"><?php echo esc_html( $shortcode_js ); ?></code>
+							<button type="button" class="button itea-copy-btn" data-target="itea-edit-shortcode-js"><?php esc_html_e( 'Copy', 'iteearmah-ad-rotation-analytics' ); ?></button>
+						</div>
+					</div>
+				</div>
+				<p class="description"><?php esc_html_e( 'Copy the shortcode or script tag to display ads from this zone on your site.', 'iteearmah-ad-rotation-analytics' ); ?></p>
+			</td>
+		</tr>
+		<?php
+	}
+
+	/**
+	 * Display Integration Codes on the edit screen after title.
+	 */
+	public static function display_integration_codes( $post ) {
+		if ( $post->post_type !== 'itea_ad' ) {
+			return;
+		}
+
+		$ad_id = intval( $post->ID );
+		$shortcode_php = '[itea_ad id="' . $ad_id . '"]';
+		$shortcode_js = '<div class="itea-adserver-placeholder" data-ad-id="' . $ad_id . '"></div>';
+		?>
+		<div class="itea-ad-edit-codes">
+			<div class="itea-edit-code-section">
+				<label><strong><?php esc_html_e( 'PHP Shortcode', 'iteearmah-ad-rotation-analytics' ); ?></strong></label>
+				<div class="itea-copy-box">
+					<code id="itea-edit-shortcode-php"><?php echo esc_html( $shortcode_php ); ?></code>
+					<button type="button" class="button itea-copy-btn" data-target="itea-edit-shortcode-php"><?php esc_html_e( 'Copy', 'iteearmah-ad-rotation-analytics' ); ?></button>
+				</div>
+			</div>
+
+			<div class="itea-edit-code-section">
+				<label><strong><?php esc_html_e( 'JavaScript Tag', 'iteearmah-ad-rotation-analytics' ); ?></strong></label>
+				<div class="itea-copy-box">
+					<code id="itea-edit-shortcode-js"><?php echo esc_html( $shortcode_js ); ?></code>
+					<button type="button" class="button itea-copy-btn" data-target="itea-edit-shortcode-js"><?php esc_html_e( 'Copy', 'iteearmah-ad-rotation-analytics' ); ?></button>
+				</div>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**
@@ -50,9 +141,14 @@ class ITEA_AdServer_Admin {
 	 */
 	public static function enqueue_admin_assets( $hook ) {
 		$screen = get_current_screen();
-		if ( $screen && $screen->post_type === 'itea_ad' ) {
-   wp_enqueue_style( 'itea-adserver-admin', plugins_url( '../assets/css/admin.css', __FILE__ ), array(), ITEA_ADSERVER_VERSION );
+		if ( $screen && ( $screen->post_type === 'itea_ad' || $screen->taxonomy === 'itea_ad_zone' ) ) {
+			wp_enqueue_style( 'itea-adserver-admin', plugins_url( '../assets/css/admin.css', __FILE__ ), array(), ITEA_ADSERVER_VERSION );
 			wp_enqueue_script( 'itea-adserver-admin', plugins_url( '../assets/js/admin.js', __FILE__ ), array( 'jquery' ), ITEA_ADSERVER_VERSION, true );
+			
+			// Localize with home URL for JS to use
+			wp_localize_script( 'itea-adserver-admin', 'iteaAdminData', array(
+				'homeUrl' => home_url( '/' ),
+			) );
 		}
 	}
 
@@ -308,6 +404,99 @@ class ITEA_AdServer_Admin {
 	}
 
 	/**
+	 * Add custom links to post row actions.
+	 */
+	public static function add_row_actions( $actions, $post ) {
+		if ( $post->post_type !== 'itea_ad' ) {
+			return $actions;
+		}
+
+		// Duplicate link
+		if ( current_user_can( 'edit_ads' ) ) {
+			$url = add_query_arg(
+				array(
+					'action' => 'itea_adserver_duplicate_ad',
+					'post'   => $post->ID,
+					'nonce'  => wp_create_nonce( 'itea_adserver_duplicate_' . $post->ID ),
+				),
+				admin_url( 'admin.php' )
+			);
+
+			$actions['duplicate'] = sprintf(
+				'<a href="%s" aria-label="%s">%s</a>',
+				esc_url( $url ),
+				esc_attr__( 'Duplicate this ad', 'iteearmah-ad-rotation-analytics' ),
+				esc_html__( 'Duplicate', 'iteearmah-ad-rotation-analytics' )
+			);
+		}
+
+		// Get Shortcode link
+		$actions['get_shortcode'] = sprintf(
+			'<a href="#" class="itea-adserver-get-shortcode" data-id="%d" data-title="%s" data-type="ad" aria-label="%s">%s</a>',
+			intval( $post->ID ),
+			esc_attr( $post->post_title ),
+			esc_attr__( 'Get integration codes', 'iteearmah-ad-rotation-analytics' ),
+			esc_html__( 'Integration Codes', 'iteearmah-ad-rotation-analytics' )
+		);
+
+		return $actions;
+	}
+
+	/**
+	 * Add custom links to zone row actions.
+	 */
+	public static function add_zone_row_actions( $actions, $term ) {
+		$actions['get_shortcode'] = sprintf(
+			'<a href="#" class="itea-adserver-get-shortcode" data-slug="%s" data-title="%s" data-type="zone" aria-label="%s">%s</a>',
+			esc_attr( $term->slug ),
+			esc_attr( $term->name ),
+			esc_attr__( 'Get integration codes', 'iteearmah-ad-rotation-analytics' ),
+			esc_html__( 'Integration Codes', 'iteearmah-ad-rotation-analytics' )
+		);
+
+		return $actions;
+	}
+
+	/**
+	 * Render the shortcode modal in the footer.
+	 */
+	public static function render_shortcode_modal() {
+		$screen = get_current_screen();
+		if ( ! $screen || ( $screen->post_type !== 'itea_ad' && $screen->taxonomy !== 'itea_ad_zone' ) ) {
+			return;
+		}
+		?>
+		<div id="itea-adserver-modal" class="itea-modal">
+			<div class="itea-modal-content">
+				<div class="itea-modal-header">
+					<span class="itea-modal-close">&times;</span>
+					<h2><?php esc_html_e( 'Ad Integration Codes', 'iteearmah-ad-rotation-analytics' ); ?></h2>
+				</div>
+				<div class="itea-modal-body">
+					<p><?php esc_html_e( 'Copy the shortcode or script tag to display this ad on your site.', 'iteearmah-ad-rotation-analytics' ); ?></p>
+					
+					<div class="itea-copy-section">
+						<label><strong><?php esc_html_e( 'PHP Shortcode', 'iteearmah-ad-rotation-analytics' ); ?></strong></label>
+						<div class="itea-copy-box">
+							<code id="itea-shortcode-php"></code>
+							<button class="button itea-copy-btn" data-target="itea-shortcode-php"><?php esc_html_e( 'Copy', 'iteearmah-ad-rotation-analytics' ); ?></button>
+						</div>
+					</div>
+
+					<div class="itea-copy-section">
+						<label><strong><?php esc_html_e( 'JavaScript Tag', 'iteearmah-ad-rotation-analytics' ); ?></strong></label>
+						<div class="itea-copy-box">
+							<code id="itea-shortcode-js"></code>
+							<button class="button itea-copy-btn" data-target="itea-shortcode-js"><?php esc_html_e( 'Copy', 'iteearmah-ad-rotation-analytics' ); ?></button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Add "Duplicate" link to post row actions.
 	 */
 	public static function add_duplicate_link( $actions, $post ) {
@@ -491,7 +680,8 @@ class ITEA_AdServer_Admin {
 		foreach ( $columns as $key => $value ) {
 			if ( $key === 'title' ) {
 				$new_columns[ $key ] = $value;
-				$new_columns['active'] = esc_html__( 'Status', 'iteearmah-ad-rotation-analytics' );
+				$new_columns['active']   = esc_html__( 'Status', 'iteearmah-ad-rotation-analytics' );
+				$new_columns['view_tag'] = esc_html__( 'Integration Codes', 'iteearmah-ad-rotation-analytics' );
 				continue;
 			}
 			if ( $key === 'date' ) {
@@ -534,6 +724,15 @@ class ITEA_AdServer_Admin {
 				$weight = function_exists( 'get_field' ) ? get_field( 'itea_ad_weight', $post_id ) : get_post_meta( $post_id, 'itea_ad_weight', true );
 				echo esc_html( $weight ?: 1 );
 				break;
+			case 'view_tag':
+				printf(
+					'<a href="#" class="itea-adserver-get-shortcode" data-id="%d" data-title="%s" data-type="ad" aria-label="%s"><span class="dashicons dashicons-media-code" title="%s"></span></a>',
+					intval( $post_id ),
+					esc_attr( get_the_title( $post_id ) ),
+					esc_attr__( 'Get integration codes', 'iteearmah-ad-rotation-analytics' ),
+					esc_attr__( 'View Integration Codes', 'iteearmah-ad-rotation-analytics' )
+				);
+				break;
 		}
 	}
 
@@ -543,13 +742,12 @@ class ITEA_AdServer_Admin {
 	}
 
 	public static function add_zone_columns( $columns ) {
-		$columns['zone_shortcode'] = esc_html__( 'Shortcode', 'iteearmah-ad-rotation-analytics' );
-		$columns['zone_script']    = esc_html__( 'Script Tag', 'iteearmah-ad-rotation-analytics' );
+		$columns['view_tag'] = esc_html__( 'Integration Codes', 'iteearmah-ad-rotation-analytics' );
 		return $columns;
 	}
 
 	public static function render_zone_columns( $content, $column_name, $term_id ) {
-		$term = get_term( $term_id, 'ad_zone' );
+		$term = get_term( $term_id, 'itea_ad_zone' );
 		if ( ! $term || is_wp_error( $term ) ) {
 			return $content;
 		}
@@ -557,16 +755,14 @@ class ITEA_AdServer_Admin {
 		$slug = $term->slug;
 
 		switch ( $column_name ) {
-			case 'zone_shortcode':
-				return '<code>[itea_adserver zone="' . esc_attr( $slug ) . '"]</code>';
-			case 'zone_script':
-				$uid = 'itea-ad-' . $slug;
-				$url = add_query_arg( array(
-					'itea_ad_serve' => 1,
-					'zone'        => $slug,
-					'uid'         => $uid,
-				), home_url( '/' ) );
-				return '<code>&lt;div id="' . esc_attr( $uid ) . '"&gt;&lt;/div&gt;&lt;script src="' . esc_url( $url ) . '" async&gt;&lt;/script&gt;</code>';
+			case 'view_tag':
+				return sprintf(
+					'<a href="#" class="itea-adserver-get-shortcode" data-slug="%s" data-title="%s" data-type="zone" aria-label="%s"><span class="dashicons dashicons-media-code" title="%s"></span></a>',
+					esc_attr( $slug ),
+					esc_attr( $term->name ),
+					esc_attr__( 'Get integration codes', 'iteearmah-ad-rotation-analytics' ),
+					esc_attr__( 'View Integration Codes', 'iteearmah-ad-rotation-analytics' )
+				);
 		}
 
 		return $content;

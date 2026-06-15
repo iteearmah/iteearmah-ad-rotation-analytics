@@ -264,3 +264,114 @@
         margin: 5px 0 0 0;
     }
 }
+
+/* Modal Styles */
+.itea-modal {
+    display: none;
+    position: fixed;
+    z-index: 100000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.itea-modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 500px;
+    max-width: 90%;
+    border-radius: 4px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.itea-modal-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.itea-modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.itea-modal-close {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.itea-modal-close:hover,
+.itea-modal-close:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+.itea-modal-body {
+    padding: 20px;
+}
+
+.itea-copy-section {
+    margin-bottom: 20px;
+}
+
+.itea-copy-section label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.itea-copy-box {
+    display: flex;
+    align-items: center;
+    background: #f0f0f1;
+    border: 1px solid #ccd0d4;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.itea-copy-box code {
+    flex: 1;
+    background: none;
+    padding: 0;
+    margin: 0;
+    border: none;
+    font-family: monospace;
+    font-size: 13px;
+    color: #2c3338;
+}
+
+.itea-copy-btn {
+    margin-left: 10px !important;
+}
+
+/* Edit Screen Codes */
+.itea-ad-edit-codes {
+    margin-top: 15px;
+    display: flex;
+    gap: 20px;
+    background: #fff;
+    padding: 15px;
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+.itea-edit-code-section {
+    flex: 1;
+}
+
+.itea-edit-code-section label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: #646970;
+}
