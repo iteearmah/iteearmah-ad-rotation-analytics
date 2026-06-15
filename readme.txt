@@ -3,7 +3,7 @@ Contributors: iteearmah
 Tags: ads, adserver, advertisement, ad-management, ad-rotation
 Requires at least: 5.0
 Tested up to: 7.0
-Stable tag: 2.1.0
+Stable tag: 2.2.1
 Donate link: https://buymeacoffee.com/iteearmah
 Requires PHP: 7.4
 License: GPLv2 or later
@@ -22,7 +22,7 @@ Iteearmah Ad Rotation and Analytics is a powerful and lightweight advertisement 
 * **Impression & Click Tracking** — Detailed tracking with 7-day statistics and analytics dashboard.
 * **Geo-Targeting** — Include or exclude ads based on the visitor's country.
 * **Device Targeting** — Target ads by device type (Mobile, Tablet, Desktop).
-* **Ad Zones** — Group ads into zones for targeted placement.
+* **Ad Zones & Advertizers** — Group ads into zones for targeted placement or categorize them by Advertizer.
 * **Scheduling** — Set start and end dates for your ad campaigns.
 * **Capping** — Set impression and click limits for each ad.
 * **Duplicate Ads** — Quickly clone existing advertisements with one click.
@@ -80,6 +80,17 @@ An admin notice will be displayed prompting you to install the required plugin. 
 5. Dashboard widget showing quick ad performance stats.
 
 == Changelog ==
+
+= 2.2.1 =
+* Maintenance: Renamed all ACF (Advanced Custom Fields) integration references to SCF (Secure Custom Fields).
+* Compatibility: Added support for native SCF function names while maintaining backward compatibility with ACF functions.
+* UI: Updated admin notices and labels to reflect Secure Custom Fields branding.
+
+= 2.2.0 =
+* Feature: Implemented "Advertizers" feature to categorize ads by advertiser.
+* Feature: Added custom fields (Email, Website, Notes) for Advertizers.
+* UI: Added "View Ads" quick link in Advertizers list.
+* Reporting: Added ability to filter analytics reports by Advertizer.
 
 = 2.1.0 =
 * Feature: Added "Integration Codes" modal to easily copy PHP shortcodes and JavaScript tags.
@@ -182,6 +193,12 @@ An admin notice will be displayed prompting you to install the required plugin. 
 * Detailed impression and click tracking with admin dashboard statistics.
 
 == Upgrade Notice ==
+
+= 2.2.1 =
+Renamed ACF to SCF references for better branding and compatibility.
+
+= 2.2.0 =
+Added Advertizers feature for better ad organization and reporting.
 
 = 2.1.0 =
 Added Integration Codes feature for easier ad placement.

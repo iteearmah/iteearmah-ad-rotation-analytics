@@ -74,5 +74,28 @@ class ITEA_AdServer_Post_Types {
 			'show_in_nav_menus' => false,
 			'show_tagcloud'     => false,
 		) );
+
+		register_taxonomy( 'itea_advertizer', 'itea_ad', array(
+			'labels' => array(
+				'name'              => 'Advertizers',
+				'singular_name'     => 'Advertizer',
+				'search_items'      => 'Search Advertizers',
+				'all_items'         => 'All Advertizers',
+				'parent_item'       => 'Parent Advertizer',
+				'parent_item_colon' => 'Parent Advertizer:',
+				'edit_item'         => 'Edit Advertizer',
+				'update_item'       => 'Update Advertizer',
+				'add_new_item'      => 'Add New Advertizer',
+				'new_item_name'     => 'New Advertizer Name',
+				'menu_name'         => 'Advertizers',
+			),
+			'hierarchical'      => true,
+			'public'            => false,
+			'show_ui'           => true,
+			'show_admin_column' => true,
+			'show_in_nav_menus' => false,
+			'show_tagcloud'     => false,
+			'rewrite'           => array( 'slug' => 'advertizer' ),
+		) );
 	}
 }

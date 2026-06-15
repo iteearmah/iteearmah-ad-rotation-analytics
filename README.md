@@ -15,7 +15,7 @@
   - **Weighted Rotation:** Assign priorities to ads inside a zone to control their delivery frequency.
   - **Geo-Targeting:** Include or exclude ads based on the visitor’s country code (utilizes server-provided headers like `HTTP_X_COUNTRY_CODE` or Cloudflare headers).
   - **Device Targeting:** Optimise delivery by targeting specific devices (Mobile, Tablet, Desktop).
-  - **Ad Zones:** Seamlessly group and categorize advertisements into placement-specific zones (e.g., Sidebar, Header, Footer).
+  - **Ad Zones & Advertizers:** Seamlessly group advertisements into placement-specific zones (e.g., Sidebar, Header, Footer) or categorize them by Advertizer.
 
 - 📊 **Performance & Analytics**
   - **Advanced Statistics & Reports:** Interactive local dashboards featuring charts (powered by Chart.js) showing 7-day trends, impressions, clicks, and CTR.
@@ -100,6 +100,17 @@ The plugin provides a intuitive, user-friendly interface for admins and contribu
 ---
 
 ## 🔄 Changelog
+
+### v2.2.1
+* **Maintenance:** Renamed all ACF (Advanced Custom Fields) integration references to SCF (Secure Custom Fields) for better alignment with the required dependency.
+* **Compatibility:** Added support for native SCF function names (`scf_`) while maintaining backward compatibility with `acf_` functions.
+* **UI:** Updated admin notices and labels to reflect Secure Custom Fields branding.
+
+### v2.2.0
+* **Feature:** Implemented "Advertizers" feature to categorize ads by advertiser.
+* **Feature:** Added custom fields (Email, Website, Notes) for Advertizers.
+* **UI:** Added "View Ads" quick link in Advertizers list.
+* **Reporting:** Added ability to filter analytics reports by Advertizer.
 
 ### v2.1.0
 * **Feature:** Added "Integration Codes" modal to easily copy PHP shortcodes and JavaScript tags.

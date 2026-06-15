@@ -4,7 +4,7 @@
 Plugin Name: Iteearmah Ad Rotation and Analytics
 Plugin URI: https://github.com/iteearmah/wp-adserver
 Description: A specialized plugin to manage, rotate, track, and serve advertisements.
-Version: 2.1.0
+Version: 2.2.1
 Author: Samuel Attoh Armah
 Author URI: https://github.com/iteearmah
 Donate link: https://buymeacoffee.com/iteearmah
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ITEA_ADSERVER_VERSION', '2.1.0' );
+define( 'ITEA_ADSERVER_VERSION', '2.2.1' );
 
 
 // Load the modular system
@@ -28,7 +28,7 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/class-itea-adserver-loader.
  * Check if Secure Custom Fields is active
  */
 function itea_adserver_check_dependencies() {
-	if ( ! function_exists( 'acf_add_local_field_group' ) && ! class_exists( 'ACF' ) ) {
+	if ( ! function_exists( 'scf_add_local_field_group' ) && ! function_exists( 'acf_add_local_field_group' ) && ! class_exists( 'ACF' ) ) {
 		add_action( 'admin_notices', 'itea_adserver_scf_missing_notice' );
 		return false;
 	}
@@ -49,7 +49,7 @@ function itea_adserver_scf_missing_notice() {
 	}
 	?>
 	<div class="notice notice-error is-dismissible">
-		<p><?php echo wp_kses_post( __( '<strong>Iteearmah Ad Rotation and Analytics</strong> requires the <strong>Secure Custom Fields</strong> (formerly ACF) plugin to be installed and active for full functionality.', 'iteearmah-ad-rotation-analytics' ) ); ?></p>
+		<p><?php echo wp_kses_post( __( '<strong>Iteearmah Ad Rotation and Analytics</strong> requires the <strong>Secure Custom Fields</strong> plugin to be installed and active for full functionality.', 'iteearmah-ad-rotation-analytics' ) ); ?></p>
 		<p>
 			<a href="<?php echo esc_url( admin_url( 'plugin-install.php?tab=search&s=secure+custom+fields' ) ); ?>" class="button button-primary"><?php esc_html_e( 'Install Secure Custom Fields', 'iteearmah-ad-rotation-analytics' ); ?></a>
 		</p>

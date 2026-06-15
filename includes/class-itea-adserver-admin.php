@@ -52,6 +52,23 @@ class ITEA_AdServer_Admin {
 		// Zone Edit/Add screens
 		add_action( 'itea_ad_zone_edit_form_fields', array( __CLASS__, 'display_zone_integration_codes' ), 10, 2 );
 		add_action( 'itea_ad_zone_add_form_fields', array( __CLASS__, 'display_zone_integration_codes' ), 10, 2 );
+
+		// Advertizer Taxonomy row actions
+		add_filter( 'manage_itea_advertizer_row_actions', array( __CLASS__, 'add_advertizer_row_actions' ), 10, 2 );
+	}
+
+	public static function add_advertizer_row_actions( $actions, $term ) {
+		if ( ! $term || is_wp_error( $term ) ) {
+			return $actions;
+		}
+
+		$actions['view_ads'] = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( admin_url( 'edit.php?post_type=itea_ad&itea_advertizer=' . $term->slug ) ),
+			esc_html__( 'View Ads', 'iteearmah-ad-rotation-analytics' )
+		);
+
+		return $actions;
 	}
 
 	/**
@@ -116,7 +133,7 @@ class ITEA_AdServer_Admin {
 		$shortcode_php = '[itea_ad id="' . $ad_id . '"]';
 		$shortcode_js = '<div class="itea-adserver-placeholder" data-ad-id="' . $ad_id . '"></div>';
 		?>
-		<div class="itea-ad-edit-codes">
+		<div class="itea-ad-edit-codes" style=" display: none;">
 			<div class="itea-edit-code-section">
 				<label><strong><?php esc_html_e( 'PHP Shortcode', 'iteearmah-ad-rotation-analytics' ); ?></strong></label>
 				<div class="itea-copy-box">

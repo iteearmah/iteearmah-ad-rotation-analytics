@@ -56,12 +56,14 @@
     background: #f6f7f7;
 }
 
-/* SCF Field Adjustments */
+/* SCF/ACF Field Adjustments */
+.itea-adserver-settings .scf-field,
 .itea-adserver-settings .acf-field {
     border-top: none !important;
     padding: 10px 0 !important;
 }
 
+.itea-adserver-settings .scf-label label,
 .itea-adserver-settings .acf-label label {
     font-weight: 600;
 }

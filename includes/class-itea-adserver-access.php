@@ -19,7 +19,9 @@ class ITEA_AdServer_Access {
 			return;
 		}
 
-		if ( function_exists( 'acf_enqueue_scripts' ) ) {
+		if ( function_exists( 'scf_enqueue_scripts' ) ) {
+			scf_enqueue_scripts();
+		} elseif ( function_exists( 'acf_enqueue_scripts' ) ) {
 			acf_enqueue_scripts();
 		}
 
@@ -129,8 +131,17 @@ class ITEA_AdServer_Access {
 			'default'           => 0,
 		) );
 
-		// Register the SCF/ACF options page slug so it's recognized
-		if ( function_exists( 'acf_add_options_page' ) ) {
+		// Register the SCF options page slug so it's recognized
+		if ( function_exists( 'scf_add_options_page' ) ) {
+			scf_add_options_sub_page( array(
+				'page_title'  => 'Access Configuration',
+				'menu_title'  => 'Access Settings',
+				'parent_slug' => 'edit.php?post_type=itea_ad',
+				'menu_slug'   => 'itea-adserver-access',
+				'capability'  => 'manage_options',
+				'redirect'    => false,
+			) );
+		} elseif ( function_exists( 'acf_add_options_page' ) ) {
 			acf_add_options_sub_page( array(
 				'page_title'  => 'Access Configuration',
 				'menu_title'  => 'Access Settings',
@@ -143,8 +154,8 @@ class ITEA_AdServer_Access {
 	}
 
 	public static function add_settings_page() {
-		// If ACF is not active, we still need the submenu page
-		if ( ! function_exists( 'acf_add_options_page' ) ) {
+		// If SCF is not active, we still need the submenu page
+		if ( ! function_exists( 'scf_add_options_page' ) && ! function_exists( 'acf_add_options_page' ) ) {
 			add_submenu_page(
 				'edit.php?post_type=itea_ad',
 				'Access Configuration',
@@ -162,7 +173,9 @@ class ITEA_AdServer_Access {
 		}
 
 		// Ensure SCF is fully ready if available
-		if ( function_exists( 'acf_render_field_wrap' ) ) {
+		if ( function_exists( 'scf_render_field_wrap' ) ) {
+			scf_enqueue_scripts();
+		} elseif ( function_exists( 'acf_render_field_wrap' ) ) {
 			acf_enqueue_scripts();
 		} else {
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'The Secure Custom Fields plugin must be active to manage access settings.', 'iteearmah-ad-rotation-analytics' ) . '</p></div>';
@@ -175,12 +188,13 @@ class ITEA_AdServer_Access {
 			update_option( 'itea_adserver_keep_data_on_uninstall', isset( $_POST['itea_adserver_keep_data_on_uninstall'] ) ? 1 : 0 );
 
 			// Save SCF fields if available
-			if ( function_exists( 'acf_maybe_get_field' ) ) {
-				// We need to manually update the field since we are not using acf_form()
+			if ( function_exists( 'scf_maybe_get_field' ) || function_exists( 'acf_maybe_get_field' ) ) {
+				// We need to manually update the field since we are not using scf_form() or acf_form()
 				$field_key = 'field_itea_adserver_allowed_users_list';
-				if ( isset( $_POST['acf'][ $field_key ] ) ) {
-					$acf_value = array_map( 'absint', (array) wp_unslash( $_POST['acf'][ $field_key ] ) );
-					update_field( $field_key, $acf_value, 'option' );
+				if ( isset( $_POST['acf'][ $field_key ] ) || isset( $_POST['scf'][ $field_key ] ) ) {
+					$scf_data = isset( $_POST['scf'][ $field_key ] ) ? $_POST['scf'][ $field_key ] : $_POST['acf'][ $field_key ];
+					$scf_value = array_map( 'absint', (array) wp_unslash( $scf_data ) );
+					update_field( $field_key, $scf_value, 'option' );
 				}
 			}
 
@@ -212,28 +226,29 @@ class ITEA_AdServer_Access {
 							<h2>User Access Whitelist</h2>
 							<p class="description">Restrict access to the Iteearmah Ad Rotation and Analytics management section to specific users. Administrators always have access.</p>
 							<table class="form-table">
-								<?php if ( function_exists( 'acf_render_field_wrap' ) ) : ?>
+								<?php 
+								$has_scf_render = function_exists( 'scf_render_field_wrap' );
+								$has_acf_render = function_exists( 'acf_render_field_wrap' );
+								if ( $has_scf_render || $has_acf_render ) : 
+								?>
 									<tr>
 										<th scope="row">Allowed Users</th>
 										<td>
 											<?php
-											$field = acf_get_field( 'field_itea_adserver_allowed_users_list' );
-											if ( $field ) {
-												$field['name']  = 'acf[field_itea_adserver_allowed_users_list]';
-												$field['value'] = get_field( 'itea_adserver_allowed_users_list', 'option' );
-												acf_render_field_wrap( $field );
-											} else {
-												// Fallback if field not found for some reason
-												acf_render_field_wrap( array(
-													'key'           => 'field_itea_adserver_allowed_users_list',
-													'label'         => 'Allowed Users',
-													'name'          => 'acf[field_itea_adserver_allowed_users_list]',
-													'type'          => 'user',
-													'return_format' => 'id',
-													'multiple'      => 1,
-													'allow_null'    => 1,
-													'value'         => get_field( 'itea_adserver_allowed_users_list', 'option' ),
-												) );
+											if ( $has_scf_render ) {
+												$field = scf_get_field_object( 'field_itea_adserver_allowed_users_list' );
+												if ( $field ) {
+													$field['name']  = 'scf[field_itea_adserver_allowed_users_list]';
+													$field['value'] = get_field( 'itea_adserver_allowed_users_list', 'option' );
+													scf_render_field_wrap( $field );
+												}
+											} elseif ( $has_acf_render ) {
+												$field = acf_get_field( 'field_itea_adserver_allowed_users_list' );
+												if ( $field ) {
+													$field['name']  = 'acf[field_itea_adserver_allowed_users_list]';
+													$field['value'] = get_field( 'itea_adserver_allowed_users_list', 'option' );
+													acf_render_field_wrap( $field );
+												}
 											}
 											?>
 										</td>

@@ -84,24 +84,39 @@ class ITEA_AdServer_Reports {
 		$days = isset( $_GET['days'] ) ? intval( $_GET['days'] ) : 30;
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$ad_id = isset( $_GET['ad_id'] ) ? intval( $_GET['ad_id'] ) : 0;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$advertizer_id = isset( $_GET['advertizer_id'] ) ? intval( $_GET['advertizer_id'] ) : 0;
 
-		$stats = ITEA_AdServer_Tracking::get_aggregated_stats( array(
+		$filter_args = array(
 			'days'  => $days,
-			'ad_id' => $ad_id,
 			'groupby' => 'date'
-		) );
+		);
 
-		$device_stats = ITEA_AdServer_Tracking::get_aggregated_stats( array(
-			'days'  => $days,
-			'ad_id' => $ad_id,
-			'groupby' => 'device'
-		) );
+		if ( $ad_id ) {
+			$filter_args['ad_id'] = $ad_id;
+		} elseif ( $advertizer_id ) {
+			$ads_in_advertizer = get_posts( array(
+				'post_type'      => 'itea_ad',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'tax_query'      => array(
+					array(
+						'taxonomy' => 'itea_advertizer',
+						'field'    => 'term_id',
+						'terms'    => $advertizer_id,
+					),
+				),
+			) );
+			$filter_args['ad_id'] = ! empty( $ads_in_advertizer ) ? $ads_in_advertizer : -1;
+		}
 
-		$country_stats = ITEA_AdServer_Tracking::get_aggregated_stats( array(
-			'days'  => $days,
-			'ad_id' => $ad_id,
-			'groupby' => 'country'
-		) );
+		$stats = ITEA_AdServer_Tracking::get_aggregated_stats( $filter_args );
+
+		$filter_args['groupby'] = 'device';
+		$device_stats = ITEA_AdServer_Tracking::get_aggregated_stats( $filter_args );
+
+		$filter_args['groupby'] = 'country';
+		$country_stats = ITEA_AdServer_Tracking::get_aggregated_stats( $filter_args );
 
 		$total_impressions = 0;
 		$total_clicks = 0;
@@ -159,6 +174,21 @@ class ITEA_AdServer_Reports {
 							$ads = get_posts( array( 'post_type' => 'itea_ad', 'posts_per_page' => 100 ) );
 							foreach ( $ads as $ad ) {
 								echo '<option value="' . esc_attr( $ad->ID ) . '" ' . selected( $ad_id, $ad->ID, false ) . '>' . esc_html( $ad->post_title ) . '</option>';
+							}
+							?>
+						</select>
+					</div>
+
+					<div class="filter-group">
+						<label for="advertizer_id"><?php esc_html_e( 'Filter by Advertizer:', 'iteearmah-ad-rotation-analytics' ); ?></label>
+						<select name="advertizer_id" id="advertizer_id">
+							<option value="0"><?php esc_html_e( 'All Advertizers', 'iteearmah-ad-rotation-analytics' ); ?></option>
+							<?php
+							$advertizers = get_terms( array( 'taxonomy' => 'itea_advertizer', 'hide_empty' => false ) );
+							if ( ! is_wp_error( $advertizers ) ) {
+								foreach ( $advertizers as $adv ) {
+									echo '<option value="' . esc_attr( $adv->term_id ) . '" ' . selected( $advertizer_id, $adv->term_id, false ) . '>' . esc_html( $adv->name ) . '</option>';
+								}
 							}
 							?>
 						</select>

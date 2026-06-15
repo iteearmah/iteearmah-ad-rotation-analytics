@@ -11,11 +11,13 @@ class ITEA_AdServer_Fields {
 	}
 
 	public static function register_fields() {
-		if ( ! function_exists( 'acf_add_local_field_group' ) ) {
+		$add_field_group = function_exists( 'scf_add_local_field_group' ) ? 'scf_add_local_field_group' : ( function_exists( 'acf_add_local_field_group' ) ? 'acf_add_local_field_group' : null );
+
+		if ( ! $add_field_group ) {
 			return;
 		}
 
-		acf_add_local_field_group( array(
+		$add_field_group( array(
 			'key'      => 'group_itea_ad_details',
 			'title'    => 'Ad Details',
 			'fields'   => array(
@@ -231,7 +233,7 @@ class ITEA_AdServer_Fields {
 			),
 		) );
 
-		acf_add_local_field_group( array(
+		$add_field_group( array(
 			'key'      => 'group_itea_ad_zone_details',
 			'title'    => 'Zone Details',
 			'fields'   => array(
@@ -256,13 +258,47 @@ class ITEA_AdServer_Fields {
 					array(
 						'param'    => 'taxonomy',
 						'operator' => '==',
-						'value'    => 'ad_zone',
+						'value'    => 'itea_ad_zone',
 					),
 				),
 			),
 		) );
 
-		acf_add_local_field_group( array(
+		$add_field_group( array(
+			'key'      => 'group_itea_advertizer_details',
+			'title'    => 'Advertizer Details',
+			'fields'   => array(
+				array(
+					'key'   => 'field_itea_advertizer_email',
+					'label' => 'Email',
+					'name'  => 'itea_advertizer_email',
+					'type'  => 'email',
+				),
+				array(
+					'key'   => 'field_itea_advertizer_website',
+					'label' => 'Website',
+					'name'  => 'itea_advertizer_website',
+					'type'  => 'url',
+				),
+				array(
+					'key'   => 'field_itea_advertizer_notes',
+					'label' => 'Notes',
+					'name'  => 'itea_advertizer_notes',
+					'type'  => 'textarea',
+				),
+			),
+			'location' => array(
+				array(
+					array(
+						'param'    => 'taxonomy',
+						'operator' => '==',
+						'value'    => 'itea_advertizer',
+					),
+				),
+			),
+		) );
+
+		$add_field_group( array(
 			'key'      => 'group_itea_ad_access_settings',
 			'title'    => 'Access Settings',
 			'fields'   => array(

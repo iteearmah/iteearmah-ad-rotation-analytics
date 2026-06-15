@@ -265,7 +265,18 @@ class ITEA_AdServer_Tracking {
 
 		$where = $wpdb->prepare( "timestamp >= %s", $start_date );
 		if ( $args['ad_id'] ) {
-			$where .= $wpdb->prepare( " AND ad_id = %d", $args['ad_id'] );
+			if ( is_array( $args['ad_id'] ) ) {
+				$ids = array_map( 'intval', $args['ad_id'] );
+				if ( ! empty( $ids ) ) {
+					$where .= " AND ad_id IN (" . implode( ',', $ids ) . ")";
+				} else {
+					$where .= " AND 1=0"; // Force no results
+				}
+			} elseif ( intval( $args['ad_id'] ) === -1 ) {
+				$where .= " AND 1=0"; // Force no results
+			} else {
+				$where .= $wpdb->prepare( " AND ad_id = %d", $args['ad_id'] );
+			}
 		}
 
 		$select = "";

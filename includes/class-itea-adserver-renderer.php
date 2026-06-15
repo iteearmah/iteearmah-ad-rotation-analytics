@@ -147,7 +147,7 @@ class ITEA_AdServer_Renderer {
 		
 		// Check for Secure Custom Fields
 		if ( ! function_exists( 'get_field' ) ) {
-			$debug_info = 'Secure Custom Fields (ACF) is not active.';
+			$debug_info = 'Secure Custom Fields plugin is not active.';
 			return '';
 		}
 
