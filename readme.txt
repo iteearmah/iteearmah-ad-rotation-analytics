@@ -3,7 +3,7 @@ Contributors: iteearmah
 Tags: ads, adserver, advertisement, ad-management, ad-rotation
 Requires at least: 5.0
 Tested up to: 7.0
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 Donate link: https://buymeacoffee.com/iteearmah
 Requires PHP: 7.4
 License: GPLv2 or later
@@ -80,6 +80,13 @@ An admin notice will be displayed prompting you to install the required plugin. 
 5. Dashboard widget showing quick ad performance stats.
 
 == Changelog ==
+
+= 2.1.0 =
+* Feature: Added "Integration Codes" modal to easily copy PHP shortcodes and JavaScript tags.
+* UI: Added "Integration Codes" column with a quick-view icon to Ads and Ad Zones list tables.
+* UI: Improved ad and zone edit screens with direct display of integration codes.
+* Improvement: Unified shortcode and script tag generation logic.
+* Maintenance: Bumped version to 2.1.0.
 
 = 2.0.0 =
 * Compliance: Updated plugin to adhere to WordPress.org detailed guidelines.
@@ -175,6 +182,9 @@ An admin notice will be displayed prompting you to install the required plugin. 
 * Detailed impression and click tracking with admin dashboard statistics.
 
 == Upgrade Notice ==
+
+= 2.1.0 =
+Added Integration Codes feature for easier ad placement.
 
 = 2.0.0 =
 Compliance, security, and device detection improvements.

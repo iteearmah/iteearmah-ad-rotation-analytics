@@ -101,6 +101,13 @@ The plugin provides a intuitive, user-friendly interface for admins and contribu
 
 ## 🔄 Changelog
 
+### v2.1.0
+* **Feature:** Added "Integration Codes" modal to easily copy PHP shortcodes and JavaScript tags.
+* **UI:** Added "Integration Codes" column with a quick-view icon to Ads and Ad Zones list tables.
+* **UI:** Improved ad and zone edit screens with direct display of integration codes.
+* **Improvement:** Unified shortcode and script tag generation logic.
+* **Maintenance:** Bumped version to 2.1.0.
+
 ### v2.0.0
 * **Compliance:** Updated plugin to adhere to WordPress.org detailed guidelines.
 * **Compatibility:** Updated "Tested up to" metadata to WordPress 7.0.
