@@ -4,7 +4,7 @@
 Plugin Name: Iteearmah Ad Rotation and Analytics
 Plugin URI: https://github.com/iteearmah/wp-adserver
 Description: A specialized plugin to manage, rotate, track, and serve advertisements.
-Version: 2.2.2
+Version: 2.2.3
 Author: Samuel Attoh Armah
 Author URI: https://github.com/iteearmah
 Donate link: https://buymeacoffee.com/iteearmah
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ITEA_ADSERVER_VERSION', '2.2.2' );
+define( 'ITEA_ADSERVER_VERSION', '2.2.3' );
 
 
 // Load the modular system
@@ -28,11 +28,41 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/class-itea-adserver-loader.
  * Check if Secure Custom Fields is active
  */
 function itea_adserver_check_dependencies() {
-	if ( ! function_exists( 'scf_add_local_field_group' ) && ! function_exists( 'acf_add_local_field_group' ) && ! class_exists( 'ACF' ) ) {
+	if ( ! function_exists( 'scf_add_local_field_group' ) && ! function_exists( 'acf_add_local_field_group' ) && ! class_exists( 'ACF' ) && ! itea_adserver_is_scf_plugin_active() ) {
 		add_action( 'admin_notices', 'itea_adserver_scf_missing_notice' );
 		return false;
 	}
 	return true;
+}
+
+/**
+ * Check active plugin records for Secure Custom Fields/ACF.
+ *
+ * This covers admin screens where this plugin may load before SCF has registered
+ * its functions/classes.
+ */
+function itea_adserver_is_scf_plugin_active() {
+	if ( ! function_exists( 'is_plugin_active' ) && is_admin() ) {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	}
+
+	$dependency_plugins = array(
+		'secure-custom-fields/secure-custom-fields.php',
+		'advanced-custom-fields/acf.php',
+		'advanced-custom-fields-pro/acf.php',
+	);
+
+	foreach ( $dependency_plugins as $plugin ) {
+		if ( function_exists( 'is_plugin_active' ) && is_plugin_active( $plugin ) ) {
+			return true;
+		}
+
+		if ( is_multisite() && function_exists( 'is_plugin_active_for_network' ) && is_plugin_active_for_network( $plugin ) ) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 /**
@@ -61,7 +91,6 @@ function itea_adserver_scf_missing_notice() {
  * Initialize the plugin
  */
 function itea_adserver_init() {
-	itea_adserver_check_dependencies();
 	new ITEA_AdServer_Loader();
 }
 
@@ -73,5 +102,7 @@ function itea_adserver_activate() {
 	ITEA_AdServer_Tracking::create_tables();
 }
 register_activation_hook( __FILE__, 'itea_adserver_activate' );
+
+add_action( 'plugins_loaded', 'itea_adserver_check_dependencies', 20 );
 
 itea_adserver_init();

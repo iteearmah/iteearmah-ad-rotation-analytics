@@ -101,6 +101,9 @@ The plugin provides a intuitive, user-friendly interface for admins and contribu
 
 ## 🔄 Changelog
 
+### v2.2.3
+* **Fix:** Prevented false Secure Custom Fields missing notice when SCF is already active.
+
 ### v2.2.2
 * **UI:** Removed "Integration Codes" column from the advertisements list table for a cleaner interface.
 
