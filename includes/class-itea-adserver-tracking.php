@@ -77,7 +77,10 @@ class ITEA_AdServer_Tracking {
 
 			$dest_url = function_exists( 'get_field' ) ? get_field( 'itea_ad_destination_url', $ad_id ) : get_post_meta( $ad_id, 'itea_ad_destination_url', true );
 			if ( $dest_url && wp_http_validate_url( $dest_url ) ) {
-				wp_safe_redirect( esc_url_raw( $dest_url ) );
+				// Advertiser destinations are external by nature; wp_safe_redirect()
+				// would reject the off-site host and fall back to admin_url().
+				// wp_http_validate_url() already restricts to well-formed http(s) URLs.
+				wp_redirect( esc_url_raw( $dest_url ) );
 				exit;
 			}
 			wp_safe_redirect( home_url() );
