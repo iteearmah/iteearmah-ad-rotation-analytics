@@ -1,3 +1,45 @@
+= 2.2.4 =
+* Fix: Switched from wp_safe_redirect() to wp_redirect() for external advertiser destinations.
+
+= 2.2.3 =
+* Fix: Prevented false Secure Custom Fields missing notice when SCF is already active.
+
+= 2.2.2 =
+* UI: Removed "Integration Codes" column from the advertisements list table for a cleaner interface.
+
+= 2.2.1 =
+* Maintenance: Renamed all ACF (Advanced Custom Fields) integration references to SCF (Secure Custom Fields).
+* Compatibility: Added support for native SCF function names while maintaining backward compatibility with ACF functions.
+* UI: Updated admin notices and labels to reflect Secure Custom Fields branding.
+
+= 2.2.0 =
+* Feature: Implemented "Advertizers" feature to categorize ads by advertiser.
+* Feature: Added custom fields (Email, Website, Notes) for Advertizers.
+* UI: Added "View Ads" quick link in Advertizers list.
+* Reporting: Added ability to filter analytics reports by Advertizer.
+
+= 2.1.0 =
+* Feature: Added "Integration Codes" modal to easily copy PHP shortcodes and JavaScript tags.
+* UI: Added "Integration Codes" column with a quick-view icon to Ads and Ad Zones list tables.
+* UI: Improved ad and zone edit screens with direct display of integration codes.
+* Improvement: Unified shortcode and script tag generation logic.
+* Maintenance: Bumped version to 2.1.0.
+
+= 2.0.0 =
+* Compliance: Updated plugin to adhere to WordPress.org detailed guidelines.
+* Compatibility: Updated "Tested up to" metadata to WordPress 7.0.
+* Security: Hardened admin notice visibility logic and refined ad export safety.
+* Device Detection: Improved reliability by integrating wp_is_mobile() as a baseline.
+* Maintenance: Bumped version to 2.0.0.
+
+= 1.9.2 =
+* Maintenance: Created .gitattributes file for better archive management.
+* Maintenance: Bumped version to 1.9.2.
+
+= 1.9.1 =
+* Maintenance: Updated .distignore to include .idea directory.
+* Maintenance: Bumped version to 1.9.1.
+
 = 1.9.0 =
 * Security hardening: Improved nonce verification across several admin and tracking functions.
 * Security hardening: Enhanced input sanitization for role capabilities and file uploads.

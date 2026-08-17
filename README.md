@@ -101,6 +101,9 @@ The plugin provides a intuitive, user-friendly interface for admins and contribu
 
 ## 🔄 Changelog
 
+### v2.2.4
+* **Fix:** Switched from `wp_safe_redirect()` to `wp_redirect()` for external advertiser destinations.
+
 ### v2.2.3
 * **Fix:** Prevented false Secure Custom Fields missing notice when SCF is already active.
 

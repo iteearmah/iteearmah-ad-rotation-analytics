@@ -3,7 +3,7 @@ Contributors: iteearmah
 Tags: ads, adserver, advertisement, ad-management, ad-rotation
 Requires at least: 5.0
 Tested up to: 7.0
-Stable tag: 2.2.3
+Stable tag: 2.2.4
 Donate link: https://buymeacoffee.com/iteearmah
 Requires PHP: 7.4
 License: GPLv2 or later
@@ -80,6 +80,9 @@ An admin notice will be displayed prompting you to install the required plugin. 
 5. Dashboard widget showing quick ad performance stats.
 
 == Changelog ==
+
+= 2.2.4 =
+* Fix: Switched from wp_safe_redirect() to wp_redirect() for external advertiser destinations.
 
 = 2.2.3 =
 * Fix: Prevented false Secure Custom Fields missing notice when SCF is already active.
