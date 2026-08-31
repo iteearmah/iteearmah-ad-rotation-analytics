@@ -170,7 +170,7 @@ class ITEA_AdServer_Renderer {
 				$link  = get_field( 'ad_link', $ad_id );
 				if ( $image ) {
 					if ( $link ) {
-						echo '<a href="' . esc_url( $link ) . '" target="_blank" class="itea-ad-link" data-ad-id="' . esc_attr( $ad_id ) . '">';
+						echo '<a href="' . esc_url( $link ) . '" target="_blank" rel="sponsored noopener noreferrer" class="itea-ad-link" data-ad-id="' . esc_attr( $ad_id ) . '" aria-label="' . esc_attr( $post->post_title ) . '">';
 					}
 					echo '<img src="' . esc_url( $image['url'] ) . '" alt="' . esc_attr( $post->post_title ) . '" style="max-width:100%; height:auto;">';
 					if ( $link ) {
@@ -409,11 +409,14 @@ class ITEA_AdServer_Renderer {
 		if ( $type === 'image' ) {
 			$image_url = self::get_cached_field( 'itea_ad_image', $selected_ad_id );
 			$click_url = add_query_arg( 'itea_ad_click', $selected_ad_id, home_url( '/' ) );
+			$ad_title  = get_the_title( $selected_ad_id );
 
 			$output = sprintf(
-				'<div class="itea-adserver-ad"><a href="%s" target="_blank"><img src="%s" style="max-width:100%%; height:auto;"></a></div>',
+				'<div class="itea-adserver-ad"><a href="%s" target="_blank" rel="sponsored noopener noreferrer" aria-label="%s"><img src="%s" alt="%s" style="max-width:100%%; height:auto;"></a></div>',
 				esc_url( $click_url ),
-				esc_url( $image_url )
+				esc_attr( $ad_title ),
+				esc_url( $image_url ),
+				esc_attr( $ad_title )
 			);
 		} else {
 			$html_code = self::get_cached_field( 'itea_ad_html_code', $selected_ad_id );
