@@ -101,6 +101,10 @@ The plugin provides a intuitive, user-friendly interface for admins and contribu
 
 ## 🔄 Changelog
 
+### v2.2.5
+* **Accessibility:** Added descriptive alt text to advertisement images and aria-label attributes to ad links.
+* **SEO:** Marked ad links with `rel="sponsored"` and added `rel="noopener noreferrer"` to `target="_blank"` links.
+
 ### v2.2.4
 * **Fix:** Switched from `wp_safe_redirect()` to `wp_redirect()` for external advertiser destinations.
 

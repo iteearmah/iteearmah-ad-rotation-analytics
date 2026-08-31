@@ -4,7 +4,7 @@
 Plugin Name: Iteearmah Ad Rotation and Analytics
 Plugin URI: https://github.com/iteearmah/wp-adserver
 Description: A specialized plugin to manage, rotate, track, and serve advertisements.
-Version: 2.2.4
+Version: 2.2.5
 Author: Samuel Attoh Armah
 Author URI: https://github.com/iteearmah
 Donate link: https://buymeacoffee.com/iteearmah
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ITEA_ADSERVER_VERSION', '2.2.4' );
+define( 'ITEA_ADSERVER_VERSION', '2.2.5' );
 
 
 // Load the modular system
